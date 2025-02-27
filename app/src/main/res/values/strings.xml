@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Board Game Logger</string>
+    <string name="personal_collection_title">%1$s\'s BGG Collection</string>
+    <string name="previously_played">Previously Played</string>
+
+
+    <!-- Content Descriptions -->
+    <string name="cd_bg_thumbnail">Thumbnail for %1$s</string>
+</resources>
