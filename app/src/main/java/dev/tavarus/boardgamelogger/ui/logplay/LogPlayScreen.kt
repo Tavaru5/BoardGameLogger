@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +34,7 @@ data class LogPlay(val gameId: String)
 fun LogPlayScreen(
     viewModel: LogPlayViewModel
 ) {
-    val game = viewModel.boardGame.collectAsState(RemoteData.Loading)
+    val game = viewModel.collectUIState()
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
@@ -42,13 +43,13 @@ fun LogPlayScreen(
             .padding(16.dp)
     ) {
 
-        when (game.value) {
+        when (game.value.boardGame) {
             is RemoteData.Failure -> {
                 Text("FAILE")
             } // TODO: FAILURE
             RemoteData.Loading -> Text("LODD") // TODO: LOADING
             is RemoteData.Success -> {
-                val boardGame = (game.value as RemoteData.Success).data
+                val boardGame = (game.value.boardGame as RemoteData.Success).data
                 GameDetails(boardGame)
             }
         }

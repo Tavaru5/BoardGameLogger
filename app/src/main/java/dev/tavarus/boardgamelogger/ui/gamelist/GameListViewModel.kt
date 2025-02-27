@@ -1,42 +1,51 @@
 package dev.tavarus.boardgamelogger.ui.gamelist
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tavarus.boardgamelogger.data.GameListRepository
 import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.domain.GameList
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import dev.tavarus.boardgamelogger.ui.shared.Action
+import dev.tavarus.boardgamelogger.ui.shared.ActionViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class GameListViewModel @Inject constructor(
     val gameListRepository: GameListRepository
-): ViewModel() {
+) : ActionViewModel<VMState, GameListAction>(VMState()) {
 
-    private val _uiState: MutableStateFlow<VMState> = MutableStateFlow(VMState())
-    val uiState = _uiState.asStateFlow()
 
     fun onSearchTextChange(text: String) {
-        _uiState.update { state -> state.copy(searchText = text) }
+        dispatch(GameListAction.SearchTextUpdated(text))
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun getGameList(username: String) {
         gameListRepository.getGameList(username).mapLatest { data ->
-            _uiState.update { state ->
-                state.copy(sections = state.sections.plus(Pair(username, data)))
-            }
+            dispatch(GameListAction.GameListReceived(username, data))
         }.launchIn(viewModelScope)
     }
 
 
-    // First I can just do it with my userId
+}
+
+sealed class GameListAction : Action<VMState> {
+    data class SearchTextUpdated(val text: String) : GameListAction()
+    data class GameListReceived(val key: String, val gameList: RemoteData<GameList>) :
+        GameListAction()
+
+    override fun update(state: VMState) = when (this) {
+        is SearchTextUpdated -> state.copy(
+            searchText = text
+        )
+
+        is GameListReceived -> state.copy(
+            sections = state.sections.plus(Pair(key, gameList))
+        )
+    }
 }
 
 data class VMState(

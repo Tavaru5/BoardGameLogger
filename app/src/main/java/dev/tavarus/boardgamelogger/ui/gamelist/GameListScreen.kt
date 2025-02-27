@@ -37,7 +37,7 @@ fun GameListScreen(
     viewModel: GameListViewModel,
     navigateToGame: (String) -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.collectUIState()
     LaunchedEffect(Unit) {
         viewModel.getGameList("tavarus")
     }
