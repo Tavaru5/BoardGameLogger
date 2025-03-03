@@ -18,7 +18,9 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = DarkBone,
     tertiaryContainer = DarkOcean,
     onPrimaryContainer = BoneWhite,
-    onSecondaryContainer = OceanGrey
+    onSecondaryContainer = OceanGrey,
+    surface = DarkerOcean,
+    onSurface = BoneWhite,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -27,7 +29,9 @@ private val LightColorScheme = lightColorScheme(
     primaryContainer = BoneWhite,
     secondaryContainer = OceanGrey,
     onPrimaryContainer = DarkOcean,
-    onSecondaryContainer = DarkBone
+    onSecondaryContainer = DarkBone,
+    surface = BoneWhite,
+    onSurface = DarkOcean,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -44,7 +48,7 @@ private val LightColorScheme = lightColorScheme(
 fun BoardGameLoggerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

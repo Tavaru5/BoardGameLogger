@@ -3,6 +3,15 @@
     <string name="personal_collection_title">%1$s\'s BGG Collection</string>
     <string name="previously_played">Previously Played</string>
 
+    <string name="title_format">%1$s (%2$s)</string>
+    <string name="play_time_range_minutes_format">%1$d-%2$d min</string>
+    <string name="play_time_single_minutes_format">%1$d min</string>
+    <string name="play_time_range_hours_format">%1$s-%2$s hr</string>
+    <string name="play_time_single_hours_format">%1$s hr</string>
+
+    <string name="player_count_range_format">%1$d-%2$d Players</string>
+    <string name="player_count_single_format">%1$d Players</string>
+    <string name="player_count_solo">1 Player</string>
 
     <!-- Content Descriptions -->
     <string name="cd_bg_thumbnail">Thumbnail for %1$s</string>

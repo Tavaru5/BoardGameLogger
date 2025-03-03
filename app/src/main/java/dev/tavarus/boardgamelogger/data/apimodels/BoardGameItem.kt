@@ -6,6 +6,8 @@ import com.tickaroo.tikxml.annotation.Path
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import dev.tavarus.boardgamelogger.domain.BoardGame
+import dev.tavarus.boardgamelogger.domain.PlayTime
+import dev.tavarus.boardgamelogger.domain.PlayerCount
 
 @Xml(name = "item")
 data class BoardGameItem(
@@ -18,8 +20,8 @@ data class BoardGameItem(
     @Element val polls: List<Poll>,
     @Element val links: List<Link>,
     @Path("yearpublished") @Attribute(name = "value") val yearPublished: String,
-    @Path("minplayers") @Attribute(name = "value") val minPlayers: String,
-    @Path("maxplayers") @Attribute(name = "value") val maxPlayers: String,
+    @Path("minplayers") @Attribute(name = "value") val minPlayers: Int,
+    @Path("maxplayers") @Attribute(name = "value") val maxPlayers: Int,
     @Path("playingtime") @Attribute(name = "value") val playingTime: Int,
     @Path("minplayingtime") @Attribute(name = "value") val minPlayingTime: Int,
     @Path("maxplayingtime") @Attribute(name = "value") val maxPlayingTime: Int,
@@ -65,6 +67,11 @@ fun BoardGameItem.toDomain(): BoardGame {
         objectId = id.toString(),
         image = image,
         thumbnail = thumbnail,
+        year = yearPublished,
+        description = description,
+        // Recommended player count could be grabbed from polls, but isn't necessary at this time
+        playerCount = PlayerCount(minPlayers, maxPlayers),
+        playTime = PlayTime(minPlayingTime, playingTime, maxPlayingTime),
     )
 }
 

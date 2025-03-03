@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             )
         )
         setContent {
-            BoardGameLoggerTheme(dynamicColor = false) {
+            BoardGameLoggerTheme {
                 Box(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer)
