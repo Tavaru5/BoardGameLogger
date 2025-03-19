@@ -1,8 +1,6 @@
 package dev.tavarus.boardgamelogger.ui.logplay
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,10 +9,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,12 +22,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.tavarus.boardgamelogger.R
@@ -43,19 +45,18 @@ import dev.tavarus.boardgamelogger.ui.theme.BoardGameLoggerTheme
 @Composable
 fun GameHeader(
     boardGame: BoardGame,
-    scrollState: ScrollState
+    currentImageSize: Dp,
+    subtitleOffset: Dp,
+    subtitleAlpha: Float,
+    headerOffset: Dp,
+    imageAlpha: Float,
+    onSubtitleMeasured: (Int) -> Unit
 ) {
-    fun Modifier.parallaxLayoutModifier(scrollState: ScrollState, rate: Int) =
-        layout { measurable, constraints ->
-            val placeable = measurable.measure(constraints)
-            val height = if (rate > 0) scrollState.value / rate else scrollState.value
-            layout(placeable.width, placeable.height) {
-                placeable.place(0, height)
-            }
-        }
-
 
     Surface(
+        modifier = Modifier.offset {
+            IntOffset(0, headerOffset.roundToPx())
+        },
         shadowElevation = 4.dp,
     ) {
 
@@ -63,21 +64,27 @@ fun GameHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .padding(16.dp),
+                .padding(16.dp)
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    layout(placeable.width, placeable.height + subtitleOffset.roundToPx()) {
+                        // Where the composable gets placed
+                        placeable.place(0, 0)
+                    }
+                },
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Card(
                 modifier = Modifier
-                    .height(240.dp)
-                    .parallaxLayoutModifier(scrollState, 2),
+                    .height(currentImageSize).alpha(imageAlpha),
                 shape = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(10.dp),
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .aspectRatio(1f)
                         .clip(RoundedCornerShape(20.dp))
-                        .fillMaxHeight(),
+                        .fillMaxHeight()
+                        .aspectRatio(1f),
                     model = boardGame.image,
                     contentDescription = stringResource(
                         R.string.cd_bg_thumbnail,
@@ -93,7 +100,14 @@ fun GameHeader(
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center
             )
-            Row(Modifier.height(IntrinsicSize.Max)) {
+            Row(
+                Modifier
+                    .height(IntrinsicSize.Max)
+                    .onSizeChanged { size ->
+                        onSubtitleMeasured(size.height) // Need to somehow add padding to this
+                    }
+                    .offset { IntOffset(0, subtitleOffset.roundToPx()) }
+                    .alpha(subtitleAlpha)) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = boardGame.playTime.formatText(),
@@ -132,10 +146,9 @@ fun GameHeaderPreview() {
         playTime = PlayTime(0, 30, 0)
     )
 
-    val scrollState = rememberScrollState()
     BoardGameLoggerTheme(dynamicColor = false) {
         CoilPreview {
-            GameHeader(boardGame, scrollState)
+            GameHeader(boardGame, 240.dp, 0.dp, 1f, 0.dp, 1f) {}
         }
     }
 }
