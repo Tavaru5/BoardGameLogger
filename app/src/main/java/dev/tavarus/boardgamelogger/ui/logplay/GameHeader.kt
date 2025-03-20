@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -45,14 +46,16 @@ import dev.tavarus.boardgamelogger.ui.theme.BoardGameLoggerTheme
 @Composable
 fun GameHeader(
     boardGame: BoardGame,
-    currentImageSize: Dp,
+    imageSizeOffset: Dp,
     subtitleOffset: Dp,
     subtitleAlpha: Float,
     headerOffset: Dp,
     imageAlpha: Float,
-    onSubtitleMeasured: (Int) -> Unit
+    onSubtitleMeasured: (Dp) -> Unit,
+    onTitleMeasured: (Dp) -> Unit,
 ) {
 
+    val currentDensity = LocalDensity.current
     Surface(
         modifier = Modifier.offset {
             IntOffset(0, headerOffset.roundToPx())
@@ -76,7 +79,8 @@ fun GameHeader(
         ) {
             Card(
                 modifier = Modifier
-                    .height(currentImageSize).alpha(imageAlpha),
+                    .height(240.dp + imageSizeOffset)
+                    .alpha(imageAlpha),
                 shape = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(10.dp),
             ) {
@@ -94,7 +98,11 @@ fun GameHeader(
                 )
             }
             Text(
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .onSizeChanged { size ->
+                        onTitleMeasured(with(currentDensity) { size.height.toDp() } + 8.dp) // Include padding
+                    },
                 text = stringResource(R.string.title_format, boardGame.name, boardGame.year),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge,
@@ -103,8 +111,9 @@ fun GameHeader(
             Row(
                 Modifier
                     .height(IntrinsicSize.Max)
+                    .padding(top = 8.dp)
                     .onSizeChanged { size ->
-                        onSubtitleMeasured(size.height) // Need to somehow add padding to this
+                        onSubtitleMeasured(with(currentDensity) { size.height.toDp() } + 8.dp) // Include padding
                     }
                     .offset { IntOffset(0, subtitleOffset.roundToPx()) }
                     .alpha(subtitleAlpha)) {
@@ -148,7 +157,7 @@ fun GameHeaderPreview() {
 
     BoardGameLoggerTheme(dynamicColor = false) {
         CoilPreview {
-            GameHeader(boardGame, 240.dp, 0.dp, 1f, 0.dp, 1f) {}
+            GameHeader(boardGame, 0.dp, 0.dp, 1f, 0.dp, 1f, {}, {})
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.tavarus.boardgamelogger.ui.logplay
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,10 +25,10 @@ data class ScrollAnimState(
 
 class CollapsingHeaderScrollConnection(
     constraints: Map<String, Pair<Dp, Dp>>,
-    val currentDensity: Density
+    private val currentDensity: Density
 ): NestedScrollConnection {
 
-    var animStates: AnimStateMap by
+    private var animStates: AnimStateMap by
         mutableStateOf(
             constraints.mapValues { (_, constraint) ->
                 ScrollAnimState(constraint.first, constraint.second, constraint.first)
@@ -46,33 +47,72 @@ class CollapsingHeaderScrollConnection(
             } else scrollAnimState
         }
     }
+    fun getTotalOffsets() = animStates.toList().fold(0.dp) { sum, (_, anim) ->
+        sum + anim.startDp - anim.endDp + anim.currentValue
+    }
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        val delta = with(currentDensity) { available.y.toDp() }
-        var currentConsumed = 0.dp
-        var i = 0
-        val animList = animStates.toList()
-        val newValues = mutableMapOf<String,Dp>()
+        if (available.y < 0) {
+            val delta = with(currentDensity) { available.y.toDp() }
+            var currentConsumed = 0.dp
+            var i = 0
+            val animList = animStates.toList()
+            val newValues = mutableMapOf<String,Dp>()
 
+            while ((currentConsumed != delta) && i < animList.size) {
+                val availableDelta = delta - currentConsumed
+                val anim = animList[i].second
+                val previousVal = anim.currentValue
+                val newVal =
+                    (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
 
-        while ((currentConsumed != delta) && i < animList.size) {
-            val availableDelta = delta - currentConsumed
-            // For some reason it is rounding the previousval + availabledelta, but then it doesn't round delta/available delta
-            val anim = animList[i].second
-            val previousVal = anim.currentValue
-            val newVal =
-                (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
+                newValues[animList[i].first] = newVal
 
-            newValues[animList[i].first] = newVal
+                currentConsumed += (newVal - previousVal)
+                i++
+            }
+            animStates = animStates.mapValues { (key, animState) ->
+                animState.copy(currentValue = newValues[key] ?: animState.currentValue)
+            }
 
-            currentConsumed += (newVal - previousVal)
-            i++
+            return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
+        } else {
+            return Offset(0f, 0f)
         }
-        animStates = animStates.mapValues { (key, animState) ->
-            animState.copy(currentValue = newValues[key] ?: animState.currentValue)
-        }
 
-        // Return the consumed scroll amount
-        return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
+    }
+
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource
+    ): Offset {
+        if (available.y > 0) {
+            val delta = with(currentDensity) { available.y.toDp() }
+            var currentConsumed = 0.dp
+            val animList = animStates.toList()
+            var i = animList.size - 1
+            val newValues = mutableMapOf<String,Dp>()
+
+            while ((currentConsumed != delta) && i >= 0) {
+                val availableDelta = delta - currentConsumed
+                val anim = animList[i].second
+                val previousVal = anim.currentValue
+                val newVal =
+                    (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
+
+                newValues[animList[i].first] = newVal
+
+                currentConsumed += (newVal - previousVal)
+                i--
+            }
+            animStates = animStates.mapValues { (key, animState) ->
+                animState.copy(currentValue = newValues[key] ?: animState.currentValue)
+            }
+
+            return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
+        } else {
+            return Offset(0f, 0f)
+        }
     }
 }
