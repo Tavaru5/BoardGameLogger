@@ -11,7 +11,6 @@ import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePreviewHandler
 import coil3.compose.LocalAsyncImagePreviewHandler
-import dev.tavarus.boardgamelogger.ui.logplay.GameDetails
 import dev.tavarus.boardgamelogger.ui.theme.BoardGameLoggerTheme
 import dev.tavarus.boardgamelogger.ui.theme.DarkBone
 
@@ -27,14 +26,3 @@ fun CoilPreview(content: @Composable () -> Unit) {
     }
 }
 
-@Composable
-fun ThemedBackground(
-    darkTheme: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    BoardGameLoggerTheme(darkTheme = darkTheme, dynamicColor = false) {
-        Column(modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)) {
-            content()
-        }
-    }
-}
