@@ -52,32 +52,10 @@ class CollapsingHeaderScrollConnection(
     }
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        if (available.y < 0) {
-            val delta = with(currentDensity) { available.y.toDp() }
-            var currentConsumed = 0.dp
-            var i = 0
-            val animList = animStates.toList()
-            val newValues = mutableMapOf<String,Dp>()
-
-            while ((currentConsumed != delta) && i < animList.size) {
-                val availableDelta = delta - currentConsumed
-                val anim = animList[i].second
-                val previousVal = anim.currentValue
-                val newVal =
-                    (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
-
-                newValues[animList[i].first] = newVal
-
-                currentConsumed += (newVal - previousVal)
-                i++
-            }
-            animStates = animStates.mapValues { (key, animState) ->
-                animState.copy(currentValue = newValues[key] ?: animState.currentValue)
-            }
-
-            return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
+        return if (available.y < 0) {
+            consumeDelta(available.y, false)
         } else {
-            return Offset(0f, 0f)
+            Offset(0f, 0f)
         }
 
     }
@@ -87,32 +65,40 @@ class CollapsingHeaderScrollConnection(
         available: Offset,
         source: NestedScrollSource
     ): Offset {
-        if (available.y > 0) {
-            val delta = with(currentDensity) { available.y.toDp() }
-            var currentConsumed = 0.dp
-            val animList = animStates.toList()
-            var i = animList.size - 1
-            val newValues = mutableMapOf<String,Dp>()
-
-            while ((currentConsumed != delta) && i >= 0) {
-                val availableDelta = delta - currentConsumed
-                val anim = animList[i].second
-                val previousVal = anim.currentValue
-                val newVal =
-                    (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
-
-                newValues[animList[i].first] = newVal
-
-                currentConsumed += (newVal - previousVal)
-                i--
-            }
-            animStates = animStates.mapValues { (key, animState) ->
-                animState.copy(currentValue = newValues[key] ?: animState.currentValue)
-            }
-
-            return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
+        return if (available.y > 0) {
+            (consumeDelta(available.y, true))
         } else {
-            return Offset(0f, 0f)
+            Offset(0f, 0f)
         }
+    }
+
+    fun consumeDelta(deltaPx: Float, reversed: Boolean): Offset {
+        val delta = with(currentDensity) { deltaPx.toDp() }
+        var currentConsumed = 0.dp
+        val animList = if (reversed) {
+            animStates.toList().reversed()
+        } else {
+            animStates.toList()
+        }
+        val newValues = mutableMapOf<String,Dp>()
+
+        var i = 0
+        while ((currentConsumed != delta) && i < animList.size) {
+            val availableDelta = delta - currentConsumed
+            val anim = animList[i].second
+            val previousVal = anim.currentValue
+            val newVal =
+                (previousVal + availableDelta).coerceIn(anim.endDp, anim.startDp)
+
+            newValues[animList[i].first] = newVal
+
+            currentConsumed += (newVal - previousVal)
+            i++
+        }
+        animStates = animStates.mapValues { (key, animState) ->
+            animState.copy(currentValue = newValues[key] ?: animState.currentValue)
+        }
+
+        return Offset(0f, with(currentDensity) { currentConsumed.toPx() })
     }
 }
