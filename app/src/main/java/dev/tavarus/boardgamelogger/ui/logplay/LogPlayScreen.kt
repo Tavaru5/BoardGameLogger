@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.data.RemoteData
+import dev.tavarus.boardgamelogger.domain.Player
+import dev.tavarus.boardgamelogger.ui.theme.LocalCustomColorsPalette
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -50,6 +52,10 @@ fun LogPlayScreen(
         )
     }
 
+    val playerColors = with(LocalCustomColorsPalette.current) {
+        listOf(pink, purp, teal, yellow) // Currently just an example list of players
+    }
+
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.primaryContainer)
@@ -67,6 +73,13 @@ fun LogPlayScreen(
                             + titleHeight
                 )
         ) {
+
+            playerColors.forEach {
+                PlayerItem(
+                    modifier = Modifier.padding(8.dp),
+                    player = Player("Tav", it)
+                )
+            }
             for (i in 1..100) {
                 Text(
                     modifier = Modifier.padding(20.dp),
