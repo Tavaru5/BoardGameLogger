@@ -1,29 +1,30 @@
 package dev.tavarus.boardgamelogger.ui.logplay
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.domain.Player
+import dev.tavarus.boardgamelogger.domain.PlayerScore
+import dev.tavarus.boardgamelogger.domain.Score
 import dev.tavarus.boardgamelogger.ui.theme.LocalCustomColorsPalette
 import kotlinx.serialization.Serializable
 
@@ -38,7 +39,7 @@ const val HEADER_OFFSET = "headerOffset"
 fun LogPlayScreen(
     viewModel: LogPlayViewModel
 ) {
-    val game = viewModel.collectUIState()
+    val uiState = viewModel.collectUIState()
     val scrollState = rememberScrollState()
     val currentDensity = LocalDensity.current
     var titleHeight by remember { mutableStateOf(0.dp) }
@@ -50,10 +51,6 @@ fun LogPlayScreen(
                 SUBTITLE_OFFSET to Pair(0.dp, 0.dp), // Gets set later to the subtitle height
             ), currentDensity
         )
-    }
-
-    val playerColors = with(LocalCustomColorsPalette.current) {
-        listOf(pink, purp, teal, yellow) // Currently just an example list of players
     }
 
     Box(
@@ -74,10 +71,19 @@ fun LogPlayScreen(
                 )
         ) {
 
-            playerColors.forEach {
+            uiState.value.currentPlay?.scores?.forEachIndexed { index, playerScore ->
                 PlayerItem(
                     modifier = Modifier.padding(8.dp),
-                    player = Player("Tav", it)
+                    playerScore = playerScore,
+                    onFocused = { focusState ->
+                        if (focusState.isFocused) {
+                            viewModel.dispatch(LogPlayAction.PlayerSelected(index))
+                        }
+                    },
+                    isSelected = uiState.value.selectedPlayer == index,
+                    onNameChanged = {viewModel.dispatch(LogPlayAction.NameUpdated(index, it))},
+                    onScoreChanged = {viewModel.dispatch(LogPlayAction.ScoreUpdated(index, it))},
+                    onWinnerTapped = {viewModel.dispatch(LogPlayAction.WinnerToggled(index))}
                 )
             }
             for (i in 1..100) {
@@ -88,13 +94,13 @@ fun LogPlayScreen(
             }
         }
 
-        when (game.value.boardGame) {
+        when (uiState.value.boardGame) {
             is RemoteData.Failure -> {
                 Text("FAILE")
             } // TODO: FAILURE
             RemoteData.Loading -> Text("LODD") // TODO: LOADING
             is RemoteData.Success -> {
-                val boardGame = (game.value.boardGame as RemoteData.Success).data
+                val boardGame = (uiState.value.boardGame as RemoteData.Success).data
                 GameHeader(
                     boardGame,
                     connection.getCurrentValue(IMAGE_SIZE_OFFSET)!!,

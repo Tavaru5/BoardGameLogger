@@ -1,8 +1,10 @@
 package dev.tavarus.boardgamelogger.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import dev.tavarus.boardgamelogger.domain.PlayerColor
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
@@ -49,4 +51,12 @@ val DarkCustomColorsPalette = CustomColorsPalette(
 )
 
 val LocalCustomColorsPalette = staticCompositionLocalOf { CustomColorsPalette() }
+
+@Composable
+fun PlayerColor.toLocalColor(colorsPalette: CustomColorsPalette) = when (this) {
+    PlayerColor.PURP -> colorsPalette.purp
+    PlayerColor.TEAL -> colorsPalette.teal
+    PlayerColor.PINK -> colorsPalette.pink
+    PlayerColor.YELLOW -> colorsPalette.yellow
+}
 
