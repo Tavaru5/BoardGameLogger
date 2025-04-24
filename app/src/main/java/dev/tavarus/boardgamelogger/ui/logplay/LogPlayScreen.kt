@@ -1,12 +1,11 @@
 package dev.tavarus.boardgamelogger.ui.logplay
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.data.RemoteData
 import kotlinx.serialization.Serializable
@@ -34,9 +32,9 @@ const val HEADER_OFFSET = "headerOffset"
 
 @Composable
 fun LogPlayScreen(
-    viewModel: LogPlayViewModel
+    viewModel: LogPlayViewModel,
 ) {
-    val game = viewModel.collectUIState()
+    val uiState = viewModel.collectUIState()
     val scrollState = rememberScrollState()
     val currentDensity = LocalDensity.current
     var titleHeight by remember { mutableStateOf(0.dp) }
@@ -60,6 +58,7 @@ fun LogPlayScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .verticalScroll(scrollState)
                 .padding(
                     top = 100.dp // Height of the image
@@ -67,21 +66,43 @@ fun LogPlayScreen(
                             + titleHeight
                 )
         ) {
-            for (i in 1..100) {
-                Text(
-                    modifier = Modifier.padding(20.dp),
-                    text = i.toString()
+
+            // If state.isSelected && not isfocused
+            // then we want to manually focus the item at the index
+            uiState.value.currentPlay?.forEachIndexed { index, playerScore ->
+                PlayerItem(
+                    modifier = Modifier.padding(8.dp),
+                    playerScore = playerScore,
+                    onFocused = { focusState ->
+                        if (focusState.isFocused) {
+                            viewModel.dispatch(LogPlayAction.PlayerFocused(index))
+                        }
+                    },
+                    isSelected = uiState.value.selectedPlayer == index,
+                    isFocused = uiState.value.focusedPlayer == index,
+                    onNameChanged = { viewModel.dispatch(LogPlayAction.NameUpdated(index, it)) },
+                    onScoreChanged = { viewModel.dispatch(LogPlayAction.ScoreUpdated(index, it)) },
+                    onWinnerTapped = { viewModel.dispatch(LogPlayAction.WinnerToggled(index)) },
                 )
+            }
+            NewPlayerItem(
+                modifier = Modifier.padding(8.dp),
+            ) {
+                viewModel.dispatch(LogPlayAction.NewPlayerCreated)
+                // Idk if it should immediately have a color then switch once a player has been added that already has a color?
+                // Or if the color shouldn't persist per player
+                // I still need to focus the player
+                // Focus player
             }
         }
 
-        when (game.value.boardGame) {
+        when (uiState.value.boardGame) {
             is RemoteData.Failure -> {
                 Text("FAILE")
             } // TODO: FAILURE
             RemoteData.Loading -> Text("LODD") // TODO: LOADING
             is RemoteData.Success -> {
-                val boardGame = (game.value.boardGame as RemoteData.Success).data
+                val boardGame = (uiState.value.boardGame as RemoteData.Success).data
                 GameHeader(
                     boardGame,
                     connection.getCurrentValue(IMAGE_SIZE_OFFSET)!!,
