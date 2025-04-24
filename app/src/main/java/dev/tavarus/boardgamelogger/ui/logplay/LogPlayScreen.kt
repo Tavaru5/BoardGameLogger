@@ -3,6 +3,7 @@ package dev.tavarus.boardgamelogger.ui.logplay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,21 +12,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.data.RemoteData
-import dev.tavarus.boardgamelogger.domain.Player
-import dev.tavarus.boardgamelogger.domain.PlayerScore
-import dev.tavarus.boardgamelogger.domain.Score
-import dev.tavarus.boardgamelogger.ui.theme.LocalCustomColorsPalette
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,7 +32,7 @@ const val HEADER_OFFSET = "headerOffset"
 
 @Composable
 fun LogPlayScreen(
-    viewModel: LogPlayViewModel
+    viewModel: LogPlayViewModel,
 ) {
     val uiState = viewModel.collectUIState()
     val scrollState = rememberScrollState()
@@ -63,6 +58,7 @@ fun LogPlayScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight()
                 .verticalScroll(scrollState)
                 .padding(
                     top = 100.dp // Height of the image
@@ -71,26 +67,32 @@ fun LogPlayScreen(
                 )
         ) {
 
-            uiState.value.currentPlay?.scores?.forEachIndexed { index, playerScore ->
+            // If state.isSelected && not isfocused
+            // then we want to manually focus the item at the index
+            uiState.value.currentPlay?.forEachIndexed { index, playerScore ->
                 PlayerItem(
                     modifier = Modifier.padding(8.dp),
                     playerScore = playerScore,
                     onFocused = { focusState ->
                         if (focusState.isFocused) {
-                            viewModel.dispatch(LogPlayAction.PlayerSelected(index))
+                            viewModel.dispatch(LogPlayAction.PlayerFocused(index))
                         }
                     },
                     isSelected = uiState.value.selectedPlayer == index,
-                    onNameChanged = {viewModel.dispatch(LogPlayAction.NameUpdated(index, it))},
-                    onScoreChanged = {viewModel.dispatch(LogPlayAction.ScoreUpdated(index, it))},
-                    onWinnerTapped = {viewModel.dispatch(LogPlayAction.WinnerToggled(index))}
+                    isFocused = uiState.value.focusedPlayer == index,
+                    onNameChanged = { viewModel.dispatch(LogPlayAction.NameUpdated(index, it)) },
+                    onScoreChanged = { viewModel.dispatch(LogPlayAction.ScoreUpdated(index, it)) },
+                    onWinnerTapped = { viewModel.dispatch(LogPlayAction.WinnerToggled(index)) },
                 )
             }
-            for (i in 1..100) {
-                Text(
-                    modifier = Modifier.padding(20.dp),
-                    text = i.toString()
-                )
+            NewPlayerItem(
+                modifier = Modifier.padding(8.dp),
+            ) {
+                viewModel.dispatch(LogPlayAction.NewPlayerCreated)
+                // Idk if it should immediately have a color then switch once a player has been added that already has a color?
+                // Or if the color shouldn't persist per player
+                // I still need to focus the player
+                // Focus player
             }
         }
 

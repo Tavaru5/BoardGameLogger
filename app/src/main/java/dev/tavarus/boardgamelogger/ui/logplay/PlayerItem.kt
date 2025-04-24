@@ -21,11 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -49,12 +52,14 @@ fun PlayerItem(
     playerScore: PlayerScore,
     onFocused: (FocusState) -> Unit,
     isSelected: Boolean,
+    isFocused: Boolean,
     onNameChanged: (String) -> Unit,
     onScoreChanged: (String) -> Unit,
     onWinnerTapped: () -> Unit,
 ) {
     val iconDrawable: Int
     val iconTint: Color
+    val focusRequester = remember { FocusRequester() }
     if (playerScore.score.winner) {
         iconDrawable = R.drawable.crown_filled
         iconTint = MaterialTheme.colorScheme.primary
@@ -65,6 +70,12 @@ fun PlayerItem(
     val border = if (isSelected) {
         BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
     } else null
+
+    LaunchedEffect(isSelected) {
+        if (isSelected && !isFocused) {
+            focusRequester.requestFocus()
+        }
+    }
 
     Card(
         modifier = modifier,
@@ -80,7 +91,7 @@ fun PlayerItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PlayerTextField(
-                modifier = Modifier.fillMaxWidth(0.6f).padding(end = 8.dp).onFocusChanged { onFocused(it) },
+                modifier = Modifier.fillMaxWidth(0.6f).padding(end = 8.dp).focusRequester(focusRequester).onFocusChanged { onFocused(it) },
                 value = playerScore.player.name,
                 onValueChange = onNameChanged,
                 placeHolderText = "Name",
@@ -171,6 +182,7 @@ fun PlayerItemPreview() {
                     playerScore = PlayerScore(Player("Tav", it),Score.IntScore(0, false)),
                     onFocused = {},
                     isSelected = false,
+                    isFocused = false,
                     onNameChanged = {},
                     onScoreChanged = {},
                     onWinnerTapped = {}
