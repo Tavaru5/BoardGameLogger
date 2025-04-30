@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tavarus.boardgamelogger.ui.NavComponent
+import dev.tavarus.boardgamelogger.ui.AppNavHost
 import dev.tavarus.boardgamelogger.ui.theme.BoardGameLoggerTheme
 
 @AndroidEntryPoint
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                 ) {
 
-                    NavComponent()
+                    AppNavHost()
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

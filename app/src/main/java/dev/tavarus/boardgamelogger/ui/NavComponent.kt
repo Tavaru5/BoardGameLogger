@@ -2,6 +2,8 @@ package dev.tavarus.boardgamelogger.ui
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -14,8 +16,7 @@ import dev.tavarus.boardgamelogger.ui.gamelist.GameListViewModel
 import dev.tavarus.boardgamelogger.ui.logplay.LogPlayViewModel
 
 @Composable
-fun NavComponent() {
-    val navController = rememberNavController()
+fun AppNavHost(navController: NavHostController = rememberNavController()) {
     NavHost(navController, startDestination = GameList) {
         composable<GameList> {
             val viewModel = hiltViewModel<GameListViewModel>()
