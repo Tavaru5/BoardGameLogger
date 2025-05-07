@@ -1,7 +1,7 @@
 package dev.tavarus.boardgamelogger.domain
 
 
-typealias Play = List<PlayerScore>
+data class Play(val scores: List<PlayerScore> = listOf())
 
 data class PlayerScore(
     val player: Player,
