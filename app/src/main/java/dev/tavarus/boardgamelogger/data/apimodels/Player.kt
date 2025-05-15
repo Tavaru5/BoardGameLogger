@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.domain
+package dev.tavarus.boardgamelogger.data.apimodels
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

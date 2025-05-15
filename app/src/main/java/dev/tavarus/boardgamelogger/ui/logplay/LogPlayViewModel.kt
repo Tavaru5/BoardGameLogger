@@ -8,8 +8,8 @@ import dev.tavarus.boardgamelogger.data.BoardGameRepository
 import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.domain.BoardGame
 import dev.tavarus.boardgamelogger.domain.Play
-import dev.tavarus.boardgamelogger.domain.Player
-import dev.tavarus.boardgamelogger.domain.PlayerColor
+import dev.tavarus.boardgamelogger.data.apimodels.Player
+import dev.tavarus.boardgamelogger.data.apimodels.PlayerColor
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
 import dev.tavarus.boardgamelogger.ui.shared.Action
