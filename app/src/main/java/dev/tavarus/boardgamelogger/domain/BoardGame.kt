@@ -1,9 +1,13 @@
 package dev.tavarus.boardgamelogger.domain
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+
+@Entity(tableName = "boardgames")
 data class BoardGame(
     val name: String,
-    val objectId: String,
+    @PrimaryKey val objectId: String,
     val image: String,
     val thumbnail: String,
     val year: String,

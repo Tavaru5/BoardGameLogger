@@ -69,7 +69,7 @@ fun LogPlayScreen(
 
             // If state.isSelected && not isfocused
             // then we want to manually focus the item at the index
-            uiState.value.currentPlay?.forEachIndexed { index, playerScore ->
+            uiState.value.currentPlay?.scores?.forEachIndexed { index, playerScore ->
                 PlayerItem(
                     modifier = Modifier.padding(8.dp),
                     playerScore = playerScore,

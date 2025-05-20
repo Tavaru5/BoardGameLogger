@@ -38,8 +38,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.R
-import dev.tavarus.boardgamelogger.domain.Player
-import dev.tavarus.boardgamelogger.domain.PlayerColor
+import dev.tavarus.boardgamelogger.data.apimodels.Player
+import dev.tavarus.boardgamelogger.data.apimodels.PlayerColor
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
 import dev.tavarus.boardgamelogger.ui.theme.BoardGameLoggerTheme

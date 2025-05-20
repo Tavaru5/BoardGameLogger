@@ -8,8 +8,8 @@ import dev.tavarus.boardgamelogger.data.BoardGameRepository
 import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.domain.BoardGame
 import dev.tavarus.boardgamelogger.domain.Play
-import dev.tavarus.boardgamelogger.domain.Player
-import dev.tavarus.boardgamelogger.domain.PlayerColor
+import dev.tavarus.boardgamelogger.data.apimodels.Player
+import dev.tavarus.boardgamelogger.data.apimodels.PlayerColor
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
 import dev.tavarus.boardgamelogger.ui.shared.Action
@@ -44,32 +44,32 @@ sealed class LogPlayAction : Action<VMState> {
         is BoardGameReceived -> state.copy(boardGame = boardGame)
         is PlayerFocused -> state.copy(selectedPlayer = index, focusedPlayer = index)
         is NameUpdated -> state.copy(
-            currentPlay = state.currentPlay?.mapIndexed { i, playerScore ->
+            currentPlay = Play(state.currentPlay?.scores?.mapIndexed { i, playerScore ->
                 if (i == index) {
                     playerScore.copy(player = playerScore.player.copy(name = name))
                 } else playerScore
-            } ?: listOf())
+            } ?: listOf()))
 
         is ScoreUpdated -> state.copy(
-            currentPlay = state.currentPlay?.mapIndexed { i, playerScore ->
+            currentPlay = Play(state.currentPlay?.scores?.mapIndexed { i, playerScore ->
                 if (i == index) {
                     playerScore.copy(score = playerScore.score.updateScore(score))
                 } else playerScore
-            } ?: listOf())
+            } ?: listOf()))
 
         is WinnerToggled -> state.copy(
-            currentPlay = state.currentPlay?.mapIndexed { i, playerScore ->
+            currentPlay = Play(state.currentPlay?.scores?.mapIndexed { i, playerScore ->
                 if (i == index) {
                     playerScore.copy(score = playerScore.score.updateWinner(!playerScore.score.winner))
                 } else playerScore
-            } ?: listOf()
+            } ?: listOf())
         )
 
         NewPlayerCreated -> {
-            var colorIndex = PlayerColor.entries.indexOf(state.currentPlay?.last()?.player?.backgroundColor) + 1
+            var colorIndex = PlayerColor.entries.indexOf(state.currentPlay?.scores?.last()?.player?.backgroundColor) + 1
             if (colorIndex == PlayerColor.entries.size) { colorIndex = 0 }
             val newPlayer = PlayerScore(Player("", PlayerColor.entries[colorIndex]), Score.IntScore(null, false))
-            state.copy(currentPlay = state.currentPlay?.plus(listOf(newPlayer)), selectedPlayer = state.currentPlay?.size)
+            state.copy(currentPlay = Play((state.currentPlay?.scores ?: listOf()).plus(listOf(newPlayer))), selectedPlayer = state.currentPlay?.scores?.size)
         }
     }
 }
@@ -77,13 +77,13 @@ sealed class LogPlayAction : Action<VMState> {
 data class VMState(
     val boardGame: RemoteData<BoardGame> = RemoteData.Loading,
     val previousPlays: List<Play> = listOf(), //This should maybe be a remotedata, since it will get pulled from the db
-    val currentPlay: Play? =
+    val currentPlay: Play? = Play(
         listOf(
             PlayerScore(Player("Tav", PlayerColor.TEAL), Score.IntScore(0, true)),
             PlayerScore(Player("Crav", PlayerColor.PINK), Score.IntScore(0, false)),
 //            PlayerScore(Player("Mav", PlayerColor.PURP), Score.IntScore(0, false)),
 //            PlayerScore(Player("Dav", PlayerColor.YELLOW), Score.IntScore(0, false)),
-        ), // This will be created when the player presses "Log play", just sample data for now
+        )), // This will be created when the player presses "Log play", just sample data for now
     val selectedPlayer: Int? = null,
     val focusedPlayer: Int? = null,
 )
