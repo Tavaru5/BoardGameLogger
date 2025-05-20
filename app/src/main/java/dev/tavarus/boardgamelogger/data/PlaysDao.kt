@@ -4,9 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import dev.tavarus.boardgamelogger.data.apimodels.DBPlay
-import dev.tavarus.boardgamelogger.data.apimodels.DBScore
-import dev.tavarus.boardgamelogger.data.apimodels.PlayWithScores
+import dev.tavarus.boardgamelogger.data.apimodels.play.DBPlay
+import dev.tavarus.boardgamelogger.data.apimodels.play.DBScore
+import dev.tavarus.boardgamelogger.data.apimodels.play.PlayWithScores
 import dev.tavarus.boardgamelogger.data.apimodels.Player
 import kotlinx.coroutines.flow.Flow
 

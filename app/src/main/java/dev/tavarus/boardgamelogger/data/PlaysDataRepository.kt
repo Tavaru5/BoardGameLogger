@@ -1,9 +1,7 @@
 package dev.tavarus.boardgamelogger.data
 
-import dev.tavarus.boardgamelogger.data.apimodels.DBPlay
-import dev.tavarus.boardgamelogger.data.apimodels.DBScore
-import dev.tavarus.boardgamelogger.data.apimodels.PlayWithScores
-import dev.tavarus.boardgamelogger.data.apimodels.ScoreWithPlayer
+import dev.tavarus.boardgamelogger.data.apimodels.play.DBPlay
+import dev.tavarus.boardgamelogger.data.apimodels.play.DBScore
 import dev.tavarus.boardgamelogger.domain.Play
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,7 +17,7 @@ class PlaysDataRepository @Inject constructor(
             }
         }
 
-    // This could also be an update thing not just an insert (for instance, if the players already exist)
+    // This should also be an update thing not just an insert (for instance, if the players already exist)
     override fun logPlay(play: Play, gameId: String) {
         val dbPlay = DBPlay(gameId = gameId)
         val scores = play.scores.map {

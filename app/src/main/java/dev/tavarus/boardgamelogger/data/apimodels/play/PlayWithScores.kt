@@ -1,20 +1,10 @@
-package dev.tavarus.boardgamelogger.data.apimodels
+package dev.tavarus.boardgamelogger.data.apimodels.play
 
 import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.Relation
-import androidx.room.TypeConverter
+import dev.tavarus.boardgamelogger.data.apimodels.Player
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
-import dev.tavarus.boardgamelogger.domain.Score
-
-@Entity(tableName = "Plays")
-data class DBPlay(
-    @PrimaryKey(autoGenerate = true)
-    val playId: Int = 0,
-    val gameId: String,
-)
 
 data class PlayWithScores(
     @Embedded val play: DBPlay,
@@ -42,14 +32,3 @@ data class ScoreWithPlayer(
     )
     val player: Player,
 )
-
-
-class ScoreConverter() {
-    @TypeConverter
-    fun fromDBString(value: String?): Score? = Score.fromDBString(value)
-
-    @TypeConverter
-    fun scoreToDBString(score: Score?): String? = score?.toDBString()
-
-}
-
