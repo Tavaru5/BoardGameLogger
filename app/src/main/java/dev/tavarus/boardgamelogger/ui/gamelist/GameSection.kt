@@ -108,7 +108,6 @@ fun GameSection(
                             rememberSharedContentState(key = "bounds"),
                             animatedVisibilityScope = this@AnimatedVisibility,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                            placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize
                         )
                         .padding(16.dp),
                     columns = GridCells.Fixed(2),
@@ -137,7 +136,6 @@ fun GameSection(
                             rememberSharedContentState(key = "bounds"),
                             animatedVisibilityScope = this@AnimatedVisibility,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                            placeHolderSize = SharedTransitionScope.PlaceHolderSize.animatedSize
                         )
                         .height(200.dp)
                         .padding(vertical = 16.dp),

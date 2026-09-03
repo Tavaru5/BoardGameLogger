@@ -1,21 +1,22 @@
 [versions]
-agp = "8.7.2"
-kotlin = "2.0.0"
-coreKtx = "1.15.0"
+agp = "9.4.0"
+kotlin = "2.4.10"
+coreKtx = "1.19.0"
 junit = "4.13.2"
-navigation = "2.8.6"
+navigation = "2.10.0"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.0"
-composeBom = "2025.02.00"
-kotlinSerialization = "1.7.3"
-retrofit = "2.11.0"
+lifecycleRuntimeKtx = "2.11.0"
+activityCompose = "1.13.0"
+composeIcons = "1.7.8"
+composeBom = "2026.08.00"
+kotlinSerialization = "1.11.0"
+retrofit = "3.0.0"
 tikxml = "0.8.13"
-hilt = "2.51.1"
-coil = "3.1.0"
-androidxHilt = "1.2.0"
-room = "2.7.1"
+hilt = "2.60.1"
+coil = "3.6.1"
+androidxHilt = "1.4.0"
+room = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -26,6 +27,7 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 androidx-lifecycle-compose = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-icons = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "composeIcons"}
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
