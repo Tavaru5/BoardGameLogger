@@ -13,6 +13,8 @@
     <string name="player_count_single_format">%1$d Players</string>
     <string name="player_count_solo">1 Player</string>
 
+    <string name="log_play_board_game_label">Board Game</string>
+
     <!-- Content Descriptions -->
     <string name="cd_bg_thumbnail">Thumbnail for %1$s</string>
 </resources>

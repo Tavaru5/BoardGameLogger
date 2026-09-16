@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.ui.logplay
+package dev.tavarus.boardgamelogger.ui.gameinfo
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -96,10 +96,10 @@ fun PlayerItem(
                 onValueChange = onNameChanged,
                 placeHolderText = "Name",
             )
-            playerScore.score.formatScore()?.let {
+            playerScore.score.formatScore()?.let { score ->
                 PlayerTextField(
                     modifier = Modifier.width(56.dp).padding(end = 8.dp).onFocusChanged { onFocused(it) },
-                    value = it,
+                    value = score,
                     onValueChange = onScoreChanged,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeHolderText = "0"

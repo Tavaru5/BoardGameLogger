@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.ui.logplay
+package dev.tavarus.boardgamelogger.ui.gameinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
