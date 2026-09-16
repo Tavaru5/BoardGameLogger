@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.data.apimodels.play
+package dev.tavarus.boardgamelogger.data.plays
 
 import androidx.room.TypeConverter
 import dev.tavarus.boardgamelogger.domain.Score
