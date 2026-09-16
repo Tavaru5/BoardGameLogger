@@ -3,7 +3,7 @@ package dev.tavarus.boardgamelogger.data.apimodels
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "Players")
 data class Player(
     @PrimaryKey val name: String,
     val backgroundColor: PlayerColor

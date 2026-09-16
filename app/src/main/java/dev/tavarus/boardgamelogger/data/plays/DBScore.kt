@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.data.apimodels.play
+package dev.tavarus.boardgamelogger.data.plays
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,8 +7,8 @@ import dev.tavarus.boardgamelogger.domain.Score
 @Entity(tableName = "scores")
 data class DBScore(
     @PrimaryKey(autoGenerate = true)
-    val scoreId: Int = 0,
+    val scoreId: Long = 0,
     val playerName: String,
-    val playId: Int,
+    val playId: Long,
     val score: Score
 )

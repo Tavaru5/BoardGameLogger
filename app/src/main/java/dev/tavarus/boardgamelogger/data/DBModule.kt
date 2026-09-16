@@ -7,6 +7,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dev.tavarus.boardgamelogger.data.plays.PlaysDao
+import dev.tavarus.boardgamelogger.data.plays.PlaysDataRepository
+import dev.tavarus.boardgamelogger.data.plays.PlaysRepository
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +29,5 @@ class DBModule {
     fun providePlaysDao(db: GamesDatabase) = db.playsDao()
 
     @Provides
-    fun providePlaysRepository(dao: PlaysDao) = PlaysDataRepository(dao)
+    fun providePlaysRepository(dao: PlaysDao): PlaysRepository = PlaysDataRepository(dao,)
 }
