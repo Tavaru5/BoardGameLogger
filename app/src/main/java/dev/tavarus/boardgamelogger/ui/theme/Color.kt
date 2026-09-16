@@ -18,6 +18,7 @@ val BerryPurple = Color(0xFFebd6f1)
 val SeafoamGreen = Color(0xFFc5e2ea)
 val CoralPink = Color(0xFFEFB8C8)
 val LeafYellow = Color(0xFFD3C78F)
+val SurfaceLight = Color(0xFFFCF8F9)
 
 val DarkerOcean = Color(0xFF374145)
 val DarkOcean = Color(0xFF455459)
@@ -26,6 +27,7 @@ val DarkBerry = Color(0xFF69596f)
 val DarkSeafoam = Color(0xFF48636a)
 val DarkCoral = Color(0xFF7D5260)
 val DarkLeaf = Color(0xFF675f30)
+val SurfaceDark = Color(0xFF131314)
 
 
 @Immutable

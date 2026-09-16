@@ -1,6 +1,5 @@
 package dev.tavarus.boardgamelogger.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +19,7 @@ private val DarkColorScheme = darkColorScheme(
     tertiaryContainer = DarkOcean,
     onPrimaryContainer = BoneWhite,
     onSecondaryContainer = OceanGrey,
-    surface = DarkerOcean,
+    surface = SurfaceDark,
     onSurface = BoneWhite,
 )
 
@@ -31,7 +30,7 @@ private val LightColorScheme = lightColorScheme(
     secondaryContainer = OceanGrey,
     onPrimaryContainer = DarkOcean,
     onSecondaryContainer = DarkBone,
-    surface = BoneWhite,
+    surface = SurfaceLight,
     onSurface = DarkOcean,
 
     /* Other default colors to override

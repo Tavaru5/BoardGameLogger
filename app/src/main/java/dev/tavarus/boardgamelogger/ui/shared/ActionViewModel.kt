@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.update
 open class ActionViewModel<T, A: Action<T>>(
     initialState: T,
 ) : ViewModel() {
-    private val uiState: MutableStateFlow<T> = MutableStateFlow(initialState)
+    val uiState: MutableStateFlow<T> = MutableStateFlow(initialState)
 
     fun dispatch(action: A) {
         uiState.update { state ->

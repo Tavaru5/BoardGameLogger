@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.ui.logplay
+package dev.tavarus.boardgamelogger.ui.gameinfo
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
@@ -44,16 +45,17 @@ fun NewPlayerItem(
 
 
     Card(
-        modifier = modifier.background(MaterialTheme.colorScheme.primaryContainer).clickable {
+        modifier = modifier.clickable {
             onClick()
         },
-        shape = RoundedCornerShape(10f),
+        shape = RoundedCornerShape(6.dp),
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.primaryContainer)
+                .clip(RoundedCornerShape(6.dp))
                 .padding(1.dp)
                 .drawBehind {
                     drawRoundRect(color = Color(0xFF999999), cornerRadius = CornerRadius(x = 10f, y = 10f), style = stroke)
