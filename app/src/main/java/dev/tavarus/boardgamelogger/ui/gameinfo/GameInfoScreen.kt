@@ -67,33 +67,6 @@ fun GameInfoScreen(
                 )
         ) {
 
-            // If state.isSelected && not isfocused
-            // then we want to manually focus the item at the index
-            uiState.value.currentPlay?.scores?.forEachIndexed { index, playerScore ->
-                PlayerItem(
-                    modifier = Modifier.padding(8.dp),
-                    playerScore = playerScore,
-                    onFocused = { focusState ->
-                        if (focusState.isFocused) {
-                            viewModel.dispatch(GameInfoAction.PlayerFocused(index))
-                        }
-                    },
-                    isSelected = uiState.value.selectedPlayer == index,
-                    isFocused = uiState.value.focusedPlayer == index,
-                    onNameChanged = { viewModel.dispatch(GameInfoAction.NameUpdated(index, it)) },
-                    onScoreChanged = { viewModel.dispatch(GameInfoAction.ScoreUpdated(index, it)) },
-                    onWinnerTapped = { viewModel.dispatch(GameInfoAction.WinnerToggled(index)) },
-                )
-            }
-            NewPlayerItem(
-                modifier = Modifier.padding(8.dp),
-            ) {
-                viewModel.dispatch(GameInfoAction.NewPlayerCreated)
-                // Idk if it should immediately have a color then switch once a player has been added that already has a color?
-                // Or if the color shouldn't persist per player
-                // I still need to focus the player
-                // Focus player
-            }
         }
 
         when (uiState.value.boardGame) {
