@@ -1,5 +1,7 @@
 package dev.tavarus.boardgamelogger.ui
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -27,13 +29,29 @@ fun NavComponent() {
                 navigateToLogPlay = { navController.navigate(LogPlayScreenRoute) }
             )
         }
-        composable<GameInfoRoute> { backStackEntry ->
+        composable<GameInfoRoute> {
             val viewModel = hiltViewModel<GameInfoViewModel>()
             GameInfoScreen(viewModel)
         }
-        composable<LogPlayScreenRoute> {
+        composable<LogPlayScreenRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(500)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(500)
+                )
+            }
+        ) {
             val viewModel = hiltViewModel<LogPlayViewModel>()
-            LogPlayScreen(viewModel)
+            LogPlayScreen(
+                viewModel,
+                onClose = { navController.popBackStack() }
+            )
         }
     }
 }

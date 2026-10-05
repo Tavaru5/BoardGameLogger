@@ -19,7 +19,8 @@ private val DarkColorScheme = darkColorScheme(
     tertiaryContainer = DarkOcean,
     onPrimaryContainer = BoneWhite,
     onSecondaryContainer = OceanGrey,
-    surface = SurfaceDark,
+    onPrimary = DarkOcean,
+    surface = DarkerOcean,
     onSurface = BoneWhite,
 )
 
@@ -30,7 +31,8 @@ private val LightColorScheme = lightColorScheme(
     secondaryContainer = OceanGrey,
     onPrimaryContainer = DarkOcean,
     onSecondaryContainer = DarkBone,
-    surface = SurfaceLight,
+    onPrimary = BoneWhite,
+    surface = BoneWhite,
     onSurface = DarkOcean,
 
     /* Other default colors to override
