@@ -49,10 +49,9 @@ fun GameListScreen(
     navigateToLogPlay: () -> Unit
 ) {
     val uiState = viewModel.collectUIState()
-    // This is non-functional until I get an auth key from BGG
-//    LaunchedEffect(Unit) {
-//        viewModel.getGameList("tavarus")
-//    }
+    LaunchedEffect(Unit) {
+        viewModel.getGameList("tavarus")
+    }
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
