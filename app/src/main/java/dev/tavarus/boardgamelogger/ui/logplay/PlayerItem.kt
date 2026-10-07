@@ -1,7 +1,9 @@
 package dev.tavarus.boardgamelogger.ui.logplay
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -16,13 +18,19 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -58,9 +67,12 @@ import dev.tavarus.boardgamelogger.ui.theme.toLocalColor
 fun PlayerItem(
     modifier: Modifier = Modifier,
     playerScoreItem: PlayerScoreItem,
-    onFocused: (FocusState) -> Unit,
+    suggestions: List<String>,
     isSelected: Boolean,
-    onScoreUpdated: ((PlayerScore) -> PlayerScore) -> Unit,
+    onFocused: (FocusState) -> Unit,
+    onNameUpdated: (String) -> Unit,
+    onScoreUpdated: (String) -> Unit,
+    onWinnerToggled: () -> Unit,
     onNext: () -> Unit,
 ) {
     val iconDrawable: Int
@@ -100,30 +112,18 @@ fun PlayerItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlayerTextField(
+            PlayerNameTextField(
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
-                    .modifyIf(isNewPlayer) {
-                        drawDottedBackground()
-                    }
+
                     .focusRequester(focusRequester)
                     .onFocusChanged { onFocused(it) },
                 value = playerScore?.player?.name ?: "",
                 onValueChange = { name ->
-                    onScoreUpdated { (player, score) ->
-                        PlayerScore(player.copy(name = name), score)
-                    }
+                    onNameUpdated(name)
                 },
-                placeHolderText = if (isNewPlayer) {
-                    stringResource(R.string.log_play_new_player_placeholder)
-                } else {
-                    stringResource(R.string.log_play_name_placeholder)
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Next,
-                ),
                 isNewPlayer = isNewPlayer,
+                searchSuggestions = suggestions,
                 onNext = onNext,
             )
             PlayerTextField(
@@ -136,9 +136,7 @@ fun PlayerItem(
                     .onFocusChanged { onFocused(it) },
                 value = playerScore?.score?.formatScore() ?: "",
                 onValueChange = { newScore ->
-                    onScoreUpdated { (player, score) ->
-                        PlayerScore(player, score.updateScore(newScore))
-                    }
+                    onScoreUpdated(newScore)
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -153,9 +151,7 @@ fun PlayerItem(
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .clickable {
-                        onScoreUpdated { (player, score) ->
-                            PlayerScore(player, score.updateWinner(!score.winner))
-                        }
+                        onWinnerToggled()
                     },
                 painter = painterResource(iconDrawable),
                 tint = iconTint,
@@ -191,16 +187,16 @@ fun PlayerTextField(
     placeHolderText: String,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val enabled = true
-    val singleLine = true
 
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier,
+        modifier = modifier.modifyIf(isNewPlayer) {
+            drawDottedBackground()
+        },
         interactionSource = interactionSource,
-        enabled = enabled,
-        singleLine = singleLine,
+        enabled = true,
+        singleLine = true,
         textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.primary),
         keyboardOptions = keyboardOptions,
         keyboardActions = KeyboardActions(
@@ -213,8 +209,8 @@ fun PlayerTextField(
             visualTransformation = VisualTransformation.None,
             innerTextField = it,
             interactionSource = interactionSource,
-            enabled = enabled,
-            singleLine = singleLine,
+            enabled = true,
+            singleLine = true,
             contentPadding = PaddingValues(6.dp),
             placeholder = {
                 Text(
@@ -230,9 +226,88 @@ fun PlayerTextField(
                         interactionSource = interactionSource,
                     )
                 }
-
             }
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlayerNameTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    onNext: () -> Unit,
+    searchSuggestions: List<String>,
+    isNewPlayer: Boolean,
+) {
+    var hasFocus by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    val placeholderText = if (isNewPlayer) {
+        stringResource(R.string.log_play_new_player_placeholder)
+    } else {
+        stringResource(R.string.log_play_name_placeholder)
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded && searchSuggestions.isNotEmpty(),
+        onExpandedChange = { shouldExpand ->
+            expanded = shouldExpand
+        }
+    ) {
+        PlayerTextField(
+            modifier = modifier
+                .menuAnchor(
+                    ExposedDropdownMenuAnchorType.PrimaryEditable,
+                    enabled = true
+                )
+                .onFocusChanged { focusState ->
+                    hasFocus = focusState.isFocused
+                    expanded = focusState.isFocused
+                },
+            value = value,
+            onValueChange = onValueChange,
+            onNext = onNext,
+            isNewPlayer = isNewPlayer,
+            placeHolderText = placeholderText,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Next,
+            ),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded && searchSuggestions.isNotEmpty(),
+            onDismissRequest = { expanded = false },
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(12.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+        ) {
+            searchSuggestions.forEach { suggestion ->
+                DropdownMenuItem(
+                    text = {
+                        Text(suggestion)
+                    },
+                    onClick = {
+                        onValueChange(suggestion)
+                        onNext()
+                    },
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    colors = androidx.compose.material3.MenuDefaults.itemColors(
+                        textColor = MaterialTheme.colorScheme.onSurface,
+                    )
+                )
+            }
+        }
     }
 }
 
@@ -246,10 +321,18 @@ fun PlayerItemPreview() {
             colors.forEach {
                 PlayerItem(
                     modifier = Modifier.padding(8.dp),
-                    playerScoreItem = PlayerScoreItem.ActivePlayer(PlayerScore(Player("Tav", it), Score.IntScore(0, false))),
-                    onFocused = {},
+                    playerScoreItem = PlayerScoreItem.ActivePlayer(
+                        PlayerScore(
+                            Player("Tav", it),
+                            Score.IntScore(0, false)
+                        )
+                    ),
                     isSelected = false,
+                    suggestions = listOf(),
+                    onFocused = {},
                     onScoreUpdated = {},
+                    onNameUpdated = {},
+                    onWinnerToggled = {},
                     onNext = {},
                 )
             }
@@ -257,8 +340,11 @@ fun PlayerItemPreview() {
                 modifier = Modifier.padding(8.dp),
                 playerScoreItem = PlayerScoreItem.NewPlayer,
                 onFocused = {},
+                suggestions = listOf(),
                 isSelected = false,
                 onScoreUpdated = {},
+                onNameUpdated = {},
+                onWinnerToggled = {},
                 onNext = {},
             )
         }

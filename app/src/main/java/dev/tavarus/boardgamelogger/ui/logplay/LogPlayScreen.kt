@@ -93,9 +93,7 @@ fun LogPlayScreen(
 
 
                 Spacer(modifier = Modifier.height(32.dp))
-                Text(
-                    "Game"
-                )
+                Text("Game")
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = uiState.value.game,
@@ -107,25 +105,30 @@ fun LogPlayScreen(
                 Spacer(Modifier.height(16.dp))
                 Text(stringResource(R.string.log_play_scores_title))
                 val focusManager = LocalFocusManager.current
-                uiState.value.scores.forEachIndexed { index, playerScore ->
+                uiState.value.scoreItems.forEachIndexed { index, playerScore ->
+                    val isSelected = uiState.value.selectedPlayer == index
                     PlayerItem(
                         modifier = Modifier.padding(vertical = 4.dp),
                         playerScoreItem = playerScore,
+                        isSelected = isSelected,
+                        suggestions = if (isSelected) {
+                            uiState.value.nameSuggestions
+                        } else {
+                            listOf()
+                        },
                         onFocused = { focusState ->
                             if (focusState.isFocused) {
                                 viewModel.dispatch(LogPlayAction.ScoreFocused(index))
                             }
                         },
-                        isSelected = uiState.value.selectedPlayer == index,
-                        onScoreUpdated = { scoreUpdate ->
-                            if (playerScore is PlayerScoreItem.ActivePlayer) {
-                                viewModel.dispatch(
-                                    LogPlayAction.ScoreUpdated(
-                                        index,
-                                        scoreUpdate(playerScore.score)
-                                    )
-                                )
-                            }
+                        onScoreUpdated = { score ->
+                            viewModel.updateScore(index, score)
+                        },
+                        onNameUpdated = { name ->
+                            viewModel.updateName(index, name)
+                        },
+                        onWinnerToggled = {
+                            viewModel.toggleWinner(index)
                         },
                         onNext = { focusManager.moveFocus(FocusDirection.Next) }
                     )
@@ -139,7 +142,7 @@ fun LogPlayScreen(
                         viewModel.logPlay()
                     },
                     colors = ButtonDefaults.buttonColors(),
-                    enabled = uiState.value.scores.filterIsInstance<PlayerScoreItem.ActivePlayer>()
+                    enabled = uiState.value.scoreItems.filterIsInstance<PlayerScoreItem.ActivePlayer>()
                         .isNotEmpty()
                 ) {
                     Text(

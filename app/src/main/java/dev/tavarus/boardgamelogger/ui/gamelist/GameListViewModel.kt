@@ -16,7 +16,7 @@ import javax.inject.Inject
 class GameListViewModel @Inject constructor(
     val gameListRepository: GameListRepository
 ) : ActionViewModel<VMState, GameListAction>(VMState()) {
-
+    override val tag = "GameList"
 
     fun onSearchTextChange(text: String) {
         dispatch(GameListAction.SearchTextUpdated(text))

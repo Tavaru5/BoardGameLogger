@@ -8,7 +8,10 @@ data class Play(val scores: List<PlayerScore> = listOf())
 data class PlayerScore(
     val player: Player,
     val score: Score,
-)
+) {
+    fun updateWinner(winner: Boolean) = this.copy(score = score.updateWinner(winner))
+    fun updateScore(newScore: String) = this.copy(score = score.updateScore(newScore))
+}
 
 sealed class Score(open val winner: Boolean, val tag: String) {
     data class IntScore(
