@@ -6,6 +6,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.tavarus.boardgamelogger.data.games.BoardGameDataRepository
+import dev.tavarus.boardgamelogger.data.games.BoardGameRepository
+import dev.tavarus.boardgamelogger.data.games.GameListDataRepository
+import dev.tavarus.boardgamelogger.data.games.GameListRepository
+import dev.tavarus.boardgamelogger.data.games.GameRemoteDataSource
 import retrofit2.Retrofit
 import javax.inject.Singleton
 

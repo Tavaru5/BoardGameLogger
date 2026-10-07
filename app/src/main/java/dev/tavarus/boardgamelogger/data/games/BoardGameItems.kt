@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.data.apimodels
+package dev.tavarus.boardgamelogger.data.games
 
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.Xml

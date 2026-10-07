@@ -1,6 +1,5 @@
 package dev.tavarus.boardgamelogger.data.plays
 
-import dev.tavarus.boardgamelogger.data.apimodels.Player
 import dev.tavarus.boardgamelogger.domain.Play
 import java.util.Date
 import javax.inject.Inject

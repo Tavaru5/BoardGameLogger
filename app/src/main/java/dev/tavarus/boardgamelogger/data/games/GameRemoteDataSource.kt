@@ -1,10 +1,6 @@
-package dev.tavarus.boardgamelogger.data
+package dev.tavarus.boardgamelogger.data.games
 
-import dev.tavarus.boardgamelogger.data.apimodels.BoardGameItems
-import dev.tavarus.boardgamelogger.data.apimodels.CollectionItems
-import dev.tavarus.boardgamelogger.data.apimodels.toDomain
-import dev.tavarus.boardgamelogger.domain.BoardGame
-import dev.tavarus.boardgamelogger.domain.GameList
+import dev.tavarus.boardgamelogger.data.BGGApiService
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -17,9 +13,3 @@ class GameRemoteDataSource @Inject constructor(
     suspend fun getGame(id: String): BoardGameItems = apiService
         .getThing(id)
 }
-
-
-
-
-
-

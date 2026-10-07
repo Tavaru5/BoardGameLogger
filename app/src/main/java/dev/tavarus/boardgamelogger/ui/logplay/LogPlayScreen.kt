@@ -39,7 +39,6 @@ data object LogPlayScreenRoute
 /**
  * Eventual pieces to be added:
  * Searching for existing games
- * Searching for existing players
  * Different scoring types
  * Enforcing different winner types (ie, 1 winner, multiple winner, no winner etc)
  * Time selector (defaults to now, but could be used for retroactive logging. Maybe just a date picker instead?)

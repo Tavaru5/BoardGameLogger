@@ -1,6 +1,7 @@
-package dev.tavarus.boardgamelogger.data
+package dev.tavarus.boardgamelogger.data.games
 
-import dev.tavarus.boardgamelogger.data.apimodels.toDomain
+import dev.tavarus.boardgamelogger.data.RemoteData
+import dev.tavarus.boardgamelogger.data.remoteCall
 import dev.tavarus.boardgamelogger.domain.BoardGame
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

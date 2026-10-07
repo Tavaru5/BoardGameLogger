@@ -1,7 +1,7 @@
 package dev.tavarus.boardgamelogger.data
 
-import dev.tavarus.boardgamelogger.data.apimodels.BoardGameItems
-import dev.tavarus.boardgamelogger.data.apimodels.CollectionItems
+import dev.tavarus.boardgamelogger.data.games.BoardGameItems
+import dev.tavarus.boardgamelogger.data.games.CollectionItems
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

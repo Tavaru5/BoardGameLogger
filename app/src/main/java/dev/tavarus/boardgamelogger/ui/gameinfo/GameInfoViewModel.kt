@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tavarus.boardgamelogger.data.BoardGameRepository
+import dev.tavarus.boardgamelogger.data.games.BoardGameRepository
 import dev.tavarus.boardgamelogger.data.RemoteData
-import dev.tavarus.boardgamelogger.data.apimodels.Player
-import dev.tavarus.boardgamelogger.data.apimodels.PlayerColor
+import dev.tavarus.boardgamelogger.data.plays.Player
+import dev.tavarus.boardgamelogger.data.plays.PlayerColor
 import dev.tavarus.boardgamelogger.domain.BoardGame
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore

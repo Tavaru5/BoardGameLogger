@@ -1,6 +1,6 @@
 package dev.tavarus.boardgamelogger.domain
 
-import dev.tavarus.boardgamelogger.data.apimodels.Player
+import dev.tavarus.boardgamelogger.data.plays.Player
 
 
 data class Play(val scores: List<PlayerScore> = listOf())
