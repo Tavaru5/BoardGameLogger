@@ -2,7 +2,7 @@ package dev.tavarus.boardgamelogger.ui.gamelist
 
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tavarus.boardgamelogger.data.GameListRepository
+import dev.tavarus.boardgamelogger.data.games.GameListRepository
 import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.domain.GameList
 import dev.tavarus.boardgamelogger.ui.shared.Action

@@ -1,6 +1,6 @@
-package dev.tavarus.boardgamelogger.data
+package dev.tavarus.boardgamelogger.data.games
 
-import dev.tavarus.boardgamelogger.data.apimodels.toDomain
+import dev.tavarus.boardgamelogger.data.remoteCall
 import dev.tavarus.boardgamelogger.domain.CollectionStatus
 import javax.inject.Inject
 

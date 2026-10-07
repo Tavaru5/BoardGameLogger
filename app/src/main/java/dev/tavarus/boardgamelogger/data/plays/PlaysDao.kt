@@ -5,9 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import dev.tavarus.boardgamelogger.data.apimodels.Player
 import dev.tavarus.boardgamelogger.domain.Play
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaysDao {

@@ -2,7 +2,6 @@ package dev.tavarus.boardgamelogger.data.plays
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import dev.tavarus.boardgamelogger.data.apimodels.Player
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 

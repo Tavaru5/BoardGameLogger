@@ -3,8 +3,8 @@ package dev.tavarus.boardgamelogger.ui.logplay
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tavarus.boardgamelogger.data.RemoteData
-import dev.tavarus.boardgamelogger.data.apimodels.Player
-import dev.tavarus.boardgamelogger.data.apimodels.PlayerColor
+import dev.tavarus.boardgamelogger.data.plays.Player
+import dev.tavarus.boardgamelogger.data.plays.PlayerColor
 import dev.tavarus.boardgamelogger.data.plays.PlaysRepository
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
@@ -46,7 +46,8 @@ class LogPlayViewModel @Inject constructor(
         nameQueryJob = viewModelScope.launch {
             dispatch(
                 LogPlayAction.SuggestionsReceived(
-                    playsRepository.queryPlayers(name).map { it.name })
+                    playsRepository.queryPlayers(name).map { it.name }.take(3)
+                )
             )
         }
     }
