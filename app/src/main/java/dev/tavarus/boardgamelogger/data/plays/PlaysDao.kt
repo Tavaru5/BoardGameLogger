@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import dev.tavarus.boardgamelogger.data.apimodels.Player
 import dev.tavarus.boardgamelogger.domain.Play
 import kotlinx.coroutines.flow.Flow
@@ -17,16 +18,20 @@ interface PlaysDao {
     @Insert
     suspend fun insertPlay(play: DBPlay): Long
 
-    @Insert
-    suspend fun insertPlayer(player: Player)
+    @Upsert
+    suspend fun upsertPlayer(player: Player)
 
     @Transaction
-    suspend fun insertWholePlay(play: Play, dbPlay: DBPlay) {
+    suspend fun insertWholePlay(play: Play, dbPlay: DBPlay): Boolean {
+        var success = true
         val playId = insertPlay(dbPlay)
         play.scores.forEach {
-            insertScore(DBScore(playerName = it.player.name, playId = playId, score = it.score))
-            insertPlayer(it.player)
+            if (insertScore(DBScore(playerName = it.player.name, playId = playId, score = it.score)) == -1L) {
+                success = false
+            }
+            upsertPlayer(it.player)
         }
+        return success
     }
 
     @Transaction

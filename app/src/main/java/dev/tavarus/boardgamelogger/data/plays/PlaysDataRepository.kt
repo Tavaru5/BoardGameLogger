@@ -14,10 +14,10 @@ class PlaysDataRepository @Inject constructor(
         }
 
     // This should also be an update thing not just an insert (for instance, if the players already exist)
-    override suspend fun logPlay(play: Play, gameId: String) {
+    override suspend fun logPlay(play: Play, gameId: String): Boolean {
         val now = Date().time
         val dbPlay = DBPlay(gameId = gameId, timeStamp = now)
-        playsDao.insertWholePlay(play, dbPlay)
+        return playsDao.insertWholePlay(play, dbPlay)
     }
 
     override suspend fun queryPlayers(name: String): List<Player> =

@@ -23,6 +23,7 @@ class GameInfoViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     val boardGameRepository: BoardGameRepository
 ) : ActionViewModel<VMState, GameInfoAction>(VMState()) {
+    override val tag = "GameInfo"
     init {
         val gameId = savedStateHandle.toRoute<GameInfoRoute>().gameId
         boardGameRepository.getBoardGame(gameId).mapLatest { boardGame ->

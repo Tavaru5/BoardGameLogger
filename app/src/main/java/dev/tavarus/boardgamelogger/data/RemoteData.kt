@@ -11,6 +11,15 @@ sealed class RemoteData<out T> {
     data class Success<T>(val data: T): RemoteData<T>()
 }
 
+fun <T> RemoteData<T>.mapSuccess(mapFunction: (T) -> T): RemoteData<T> {
+    return when (this) {
+        is RemoteData.Success -> {
+            RemoteData.Success(mapFunction(this.data))
+        }
+        else -> this
+    }
+}
+
 fun <T> remoteCall( retries: Int = 3, call: suspend () -> T): Flow<RemoteData<T>> = flow {
     emit(RemoteData.Loading)
     var error: Error? = null
