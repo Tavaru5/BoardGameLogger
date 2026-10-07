@@ -5,12 +5,15 @@
 
 ### Technical Details
 <!-- Details on work that was especially tricky or might need explanation -->
+N/A
 
 ### Screenshots
 <!-- Screenshots or recordings of the changes if applicable.
 Set image width to 50% if possible for readability. 
 Before and after screenshots are nice if you made adjustments to a screen. -->
+N/A
 
 ### Future considerations
 <!-- Anything to keep in mind for the future. If it is more than a small note, 
 consider creating an issue for it -->
+N/A
