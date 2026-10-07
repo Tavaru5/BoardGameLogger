@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt.android)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 kotlin {
@@ -12,6 +13,10 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xannotation-default-target=first-only")
     }
+}
+
+secrets {
+    propertiesFileName = "secrets.properties"
 }
 
 android {
@@ -40,6 +45,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

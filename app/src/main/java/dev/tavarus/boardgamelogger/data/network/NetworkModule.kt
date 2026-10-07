@@ -1,4 +1,4 @@
-package dev.tavarus.boardgamelogger.data
+package dev.tavarus.boardgamelogger.data.network
 
 import com.tickaroo.tikxml.TikXml
 import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
@@ -6,11 +6,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.tavarus.boardgamelogger.data.BGGApiService
 import dev.tavarus.boardgamelogger.data.games.BoardGameDataRepository
 import dev.tavarus.boardgamelogger.data.games.BoardGameRepository
 import dev.tavarus.boardgamelogger.data.games.GameListDataRepository
 import dev.tavarus.boardgamelogger.data.games.GameListRepository
 import dev.tavarus.boardgamelogger.data.games.GameRemoteDataSource
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -33,9 +35,12 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(tikXmlConverterFactory: TikXmlConverterFactory): Retrofit {
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(BGGAuthHeader)
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(tikXmlConverterFactory)
+            .client(httpClient.build())
             .build()
     }
 

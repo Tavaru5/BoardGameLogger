@@ -6,3 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.hilt.android) apply false
 }
+
+buildscript {
+    dependencies {
+        classpath(libs.secrets.gradle.plugin)
+    }
+}
