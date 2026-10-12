@@ -6,6 +6,7 @@ import dev.tavarus.boardgamelogger.data.RemoteData
 import dev.tavarus.boardgamelogger.data.plays.Player
 import dev.tavarus.boardgamelogger.data.plays.PlayerColor
 import dev.tavarus.boardgamelogger.data.plays.PlaysRepository
+import dev.tavarus.boardgamelogger.domain.BoardGame
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
@@ -50,6 +51,14 @@ class LogPlayViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun updateGameTitle(game: String) {
+        // Gotta do something different when you click from the suggestion
+        // Make a debounced call to the suggestions api
+        // that call also needs to be canceled when you unfocus the field
+        // for the call I have to add the call to the BGG api as well and maybe filter it
+        // Probably also need a scroll bar?
     }
 
     fun updateScore(index: Int, score: String) {
@@ -142,6 +151,7 @@ fun VMState.updateActivePlayerItem(index: Int, scoreUpdate: (PlayerScore) -> Pla
 
 data class VMState(
     val game: String = "", // This will eventually be a BoardGame object
+    val gameSuggestions: List<BoardGame> = listOf(),
     val scoreItems: List<PlayerScoreItem> = listOf(PlayerScoreItem.NewPlayer),
     val selectedPlayer: Int? = null,
     val successState: RemoteData<Boolean> = RemoteData.Success(false),

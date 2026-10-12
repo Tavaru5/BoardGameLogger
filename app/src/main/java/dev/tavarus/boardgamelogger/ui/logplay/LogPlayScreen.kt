@@ -92,7 +92,19 @@ fun LogPlayScreen(
 
 
                 Spacer(modifier = Modifier.height(32.dp))
-                Text("Game")
+                Text(stringResource(R.string.log_play_board_game_title))
+                DropdownSearchInput(
+                    searchSuggestions = uiState.value.gameSuggestions.map { it.name },
+                    onMenuItemSelected = { viewModel.updateGameTitle(it) },
+                ) { dropdownModifier ->
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().dropdownModifier(),
+                        value = uiState.value.game,
+                        onValueChange = { viewModel.updateGameTitle(it) },
+                        placeholder = { Text(stringResource(R.string.log_play_board_game_hint)) },
+                        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
+                    )
+                }
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = uiState.value.game,
@@ -145,7 +157,7 @@ fun LogPlayScreen(
                         .isNotEmpty()
                 ) {
                     Text(
-                        text = "Log Play",
+                        text = stringResource(R.string.log_play_cta),
                     )
                 }
             }

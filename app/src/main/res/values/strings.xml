@@ -13,7 +13,7 @@
     <string name="player_count_single_format">%1$d Players</string>
     <string name="player_count_solo">1 Player</string>
 
-    <string name="log_play_board_game_label">Board Game</string>
+    <string name="log_play_board_game_title">Game</string>
     <string name="log_play_board_game_hint">What game did you play?</string>
     <string name="log_play_scores_title">Scores</string>
     <string name="log_play_name_placeholder">Name</string>
@@ -25,6 +25,6 @@
     <string name="cd_bg_thumbnail">Thumbnail for %1$s</string>
     <string name="cd_close_icon">Close</string>
 
-    <!-- -->
+    <!-- Click Labels -->
     <string name="click_label_close_button">close screen</string>
 </resources>
