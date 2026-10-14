@@ -249,6 +249,7 @@ fun PlayerNameTextField(
 
     DropdownSearchInput(
         searchSuggestions = searchSuggestions,
+        displayName = { it },
         onMenuItemSelected = { suggestion ->
             onValueChange(suggestion)
             onNext()

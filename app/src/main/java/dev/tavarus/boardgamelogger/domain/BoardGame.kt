@@ -6,15 +6,15 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "boardgames")
 data class BoardGame(
-    val name: String,
-    @PrimaryKey val objectId: String,
+    override val name: String,
+    @PrimaryKey override val objectId: String,
     val image: String,
     val thumbnail: String,
-    val year: String,
+    override val year: String,
     val description: String,
     val playerCount: PlayerCount,
     val playTime: PlayTime,
-)
+) : BaseGame
 
 data class PlayerCount(
     val min: Int,

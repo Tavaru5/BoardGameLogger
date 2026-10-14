@@ -2,6 +2,7 @@ package dev.tavarus.boardgamelogger.data
 
 import dev.tavarus.boardgamelogger.data.games.BoardGameItems
 import dev.tavarus.boardgamelogger.data.games.CollectionItems
+import dev.tavarus.boardgamelogger.data.search.SearchItems
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,4 +15,7 @@ interface BGGApiService {
 
     @GET("thing")
     suspend fun getThing(@Query("id") id: String): BoardGameItems
+
+    @GET("search")
+    suspend fun searchBoardGames(@Query("query") query: String, @Query("type") type: String): Response<SearchItems>
 }
