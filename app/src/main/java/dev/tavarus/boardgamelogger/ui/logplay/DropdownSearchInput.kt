@@ -3,6 +3,7 @@ package dev.tavarus.boardgamelogger.ui.logplay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -57,12 +58,17 @@ fun <T> DropdownSearchInput(
                 }
         }
 
-
+        /**
+         * I'd love to be able to trim the height of this to a specific item count
+         * (ie show max 4.5 items), but it doesn't seem like there's a way to do that without
+         * remeasuring each time it's updated, which wouldn't be great for search suggestions.
+         */
         ExposedDropdownMenu(
             expanded = expanded && searchSuggestions.isNotEmpty(),
             onDismissRequest = { expanded = false },
             shape = containerShape,
             modifier = Modifier
+                .heightIn(0.dp, 400.dp)
                 .clip(containerShape)
                 .background(
                     MaterialTheme.colorScheme.surface,
@@ -74,11 +80,6 @@ fun <T> DropdownSearchInput(
                     shape = containerShape
                 )
         ) {
-            /**
-             * I'd love to be able to trim the height of this (ie show max 4.5 items), but it
-             * doesn't seem like there's a way to do that without remeasuring each time it's
-             * updated, which wouldn't be great for search suggestions.
-             */
             searchSuggestions.forEach { suggestion ->
                 DropdownMenuItem(
                     text = {
