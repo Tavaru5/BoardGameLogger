@@ -49,6 +49,7 @@ fun LogPlayScreen(
     onClose: () -> Unit,
 ) {
     val uiState = viewModel.collectUIState()
+    val focusManager = LocalFocusManager.current
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
@@ -92,18 +93,26 @@ fun LogPlayScreen(
 
 
                 Spacer(modifier = Modifier.height(32.dp))
-                Text("Game")
-                OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = uiState.value.game,
-                    onValueChange = { viewModel.dispatch(LogPlayAction.GameTitleChange(it)) },
-                    placeholder = { Text(stringResource(R.string.log_play_board_game_hint)) },
-                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
-                )
+                Text(stringResource(R.string.log_play_board_game_title))
+                DropdownSearchInput(
+                    searchSuggestions = uiState.value.gameSuggestions,
+                    displayName = { it.displayName },
+                    onMenuItemSelected = {
+                        focusManager.clearFocus()
+                        viewModel.gameTitleSelected(it)
+                    },
+                ) { dropdownModifier ->
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().dropdownModifier(),
+                        value = uiState.value.game,
+                        onValueChange = { viewModel.updateGameTitle(it) },
+                        placeholder = { Text(stringResource(R.string.log_play_board_game_hint)) },
+                        keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
                 Text(stringResource(R.string.log_play_scores_title))
-                val focusManager = LocalFocusManager.current
                 uiState.value.scoreItems.forEachIndexed { index, playerScore ->
                     val isSelected = uiState.value.selectedPlayer == index
                     PlayerItem(
@@ -145,7 +154,7 @@ fun LogPlayScreen(
                         .isNotEmpty()
                 ) {
                     Text(
-                        text = "Log Play",
+                        text = stringResource(R.string.log_play_cta),
                     )
                 }
             }

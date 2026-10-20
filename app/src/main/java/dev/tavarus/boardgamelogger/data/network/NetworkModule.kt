@@ -12,6 +12,8 @@ import dev.tavarus.boardgamelogger.data.games.BoardGameRepository
 import dev.tavarus.boardgamelogger.data.games.GameListDataRepository
 import dev.tavarus.boardgamelogger.data.games.GameListRepository
 import dev.tavarus.boardgamelogger.data.games.GameRemoteDataSource
+import dev.tavarus.boardgamelogger.data.search.SearchBoardGameUseCase
+import dev.tavarus.boardgamelogger.data.search.SearchBoardGameUseCaseImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -63,6 +65,11 @@ class NetworkModule {
     @Provides
     fun provideBoardGameRepository(gameRemoteDataSource: GameRemoteDataSource): BoardGameRepository {
         return BoardGameDataRepository(gameRemoteDataSource)
+    }
+
+    @Provides
+    fun provideSearchBoardGame(gameRemoteDataSource: GameRemoteDataSource): SearchBoardGameUseCase {
+        return SearchBoardGameUseCaseImpl(gameRemoteDataSource)
     }
 
 }

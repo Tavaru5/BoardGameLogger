@@ -241,30 +241,23 @@ fun PlayerNameTextField(
     searchSuggestions: List<String>,
     isNewPlayer: Boolean,
 ) {
-    var hasFocus by remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }
     val placeholderText = if (isNewPlayer) {
         stringResource(R.string.log_play_new_player_placeholder)
     } else {
         stringResource(R.string.log_play_name_placeholder)
     }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded && searchSuggestions.isNotEmpty(),
-        onExpandedChange = { shouldExpand ->
-            expanded = shouldExpand
+    DropdownSearchInput(
+        searchSuggestions = searchSuggestions,
+        displayName = { it },
+        onMenuItemSelected = { suggestion ->
+            onValueChange(suggestion)
+            onNext()
         }
-    ) {
+    ) { dropdownModifier ->
         PlayerTextField(
             modifier = modifier
-                .menuAnchor(
-                    ExposedDropdownMenuAnchorType.PrimaryEditable,
-                    enabled = true
-                )
-                .onFocusChanged { focusState ->
-                    hasFocus = focusState.isFocused
-                    expanded = focusState.isFocused
-                },
+                .dropdownModifier(),
             value = value,
             onValueChange = onValueChange,
             onNext = onNext,
@@ -275,39 +268,6 @@ fun PlayerNameTextField(
                 imeAction = ImeAction.Next,
             ),
         )
-        ExposedDropdownMenu(
-            expanded = expanded && searchSuggestions.isNotEmpty(),
-            onDismissRequest = { expanded = false },
-            shape = RoundedCornerShape(12.dp),
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(12.dp)
-                )
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(12.dp)
-                )
-        ) {
-            searchSuggestions.forEach { suggestion ->
-                DropdownMenuItem(
-                    text = {
-                        Text(suggestion)
-                    },
-                    onClick = {
-                        onValueChange(suggestion)
-                        onNext()
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    colors = androidx.compose.material3.MenuDefaults.itemColors(
-                        textColor = MaterialTheme.colorScheme.onSurface,
-                    )
-                )
-            }
-        }
     }
 }
 

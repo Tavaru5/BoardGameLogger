@@ -3,24 +3,32 @@ package dev.tavarus.boardgamelogger.ui.logplay
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tavarus.boardgamelogger.data.RemoteData
+import dev.tavarus.boardgamelogger.data.search.SearchBoardGameUseCase
 import dev.tavarus.boardgamelogger.data.plays.Player
 import dev.tavarus.boardgamelogger.data.plays.PlayerColor
 import dev.tavarus.boardgamelogger.data.plays.PlaysRepository
+import dev.tavarus.boardgamelogger.domain.BaseGame
+import dev.tavarus.boardgamelogger.domain.ListGame
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
+import dev.tavarus.boardgamelogger.domain.SearchGame
 import dev.tavarus.boardgamelogger.ui.shared.Action
 import dev.tavarus.boardgamelogger.ui.shared.ActionViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class LogPlayViewModel @Inject constructor(
     val playsRepository: PlaysRepository,
+    val searchBoardGameUseCase: SearchBoardGameUseCase
 ) : ActionViewModel<VMState, LogPlayAction>(VMState()) {
     override val tag = "LogPlay"
     var nameQueryJob: Job? = null
+    var searchBoardGameJob: Job? = null
 
     fun logPlay() {
         dispatch(LogPlayAction.ShowLoading)
@@ -45,11 +53,29 @@ class LogPlayViewModel @Inject constructor(
         nameQueryJob?.cancel()
         nameQueryJob = viewModelScope.launch {
             dispatch(
-                LogPlayAction.SuggestionsReceived(
+                LogPlayAction.NameSuggestionsReceived(
                     playsRepository.queryPlayers(name).map { it.name }.take(3)
                 )
             )
         }
+    }
+
+    fun updateGameTitle(game: String) {
+        dispatch(LogPlayAction.GameTitleChange(game))
+        if (game.length > 3) {
+            searchBoardGameJob?.cancel()
+            searchBoardGameJob = viewModelScope.launch {
+                delay(500L.milliseconds)
+                dispatch(LogPlayAction.GameSuggestionsReceived(searchBoardGameUseCase.invoke(game)))
+            }
+        } else {
+            dispatch(LogPlayAction.GameSuggestionsReceived(listOf()))
+        }
+    }
+
+    fun gameTitleSelected(game: BaseGame) {
+        dispatch(LogPlayAction.GameTitleChange(game.displayName))
+        // This is where we would set the "selected game" correctly
     }
 
     fun updateScore(index: Int, score: String) {
@@ -70,7 +96,8 @@ sealed class LogPlayAction : Action<VMState> {
     data object ShowLoading : LogPlayAction()
     data object SuccessfulLog : LogPlayAction()
     data class ShowError(val error: Error) : LogPlayAction()
-    data class SuggestionsReceived(val suggestions: List<String>) : LogPlayAction()
+    data class NameSuggestionsReceived(val suggestions: List<String>) : LogPlayAction()
+    data class GameSuggestionsReceived(val suggestions: List<BaseGame>) : LogPlayAction()
 
     override fun update(state: VMState) = when (this) {
         is GameTitleChange -> state.copy(game = this.title)
@@ -124,8 +151,12 @@ sealed class LogPlayAction : Action<VMState> {
             successState = RemoteData.Success(true)
         )
 
-        is SuggestionsReceived -> state.copy(
+        is NameSuggestionsReceived -> state.copy(
             nameSuggestions = suggestions
+        )
+
+        is GameSuggestionsReceived -> state.copy(
+            gameSuggestions = suggestions
         )
     }
 }
@@ -142,6 +173,7 @@ fun VMState.updateActivePlayerItem(index: Int, scoreUpdate: (PlayerScore) -> Pla
 
 data class VMState(
     val game: String = "", // This will eventually be a BoardGame object
+    val gameSuggestions: List<BaseGame> = listOf(),
     val scoreItems: List<PlayerScoreItem> = listOf(PlayerScoreItem.NewPlayer),
     val selectedPlayer: Int? = null,
     val successState: RemoteData<Boolean> = RemoteData.Success(false),
