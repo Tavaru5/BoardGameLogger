@@ -3,16 +3,15 @@ package dev.tavarus.boardgamelogger.ui.logplay
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tavarus.boardgamelogger.data.RemoteData
-import dev.tavarus.boardgamelogger.data.search.SearchBoardGameUseCase
 import dev.tavarus.boardgamelogger.data.plays.Player
 import dev.tavarus.boardgamelogger.data.plays.PlayerColor
 import dev.tavarus.boardgamelogger.data.plays.PlaysRepository
+import dev.tavarus.boardgamelogger.data.search.SearchBoardGameUseCase
 import dev.tavarus.boardgamelogger.domain.BaseGame
-import dev.tavarus.boardgamelogger.domain.ListGame
+import dev.tavarus.boardgamelogger.domain.LocalGame
 import dev.tavarus.boardgamelogger.domain.Play
 import dev.tavarus.boardgamelogger.domain.PlayerScore
 import dev.tavarus.boardgamelogger.domain.Score
-import dev.tavarus.boardgamelogger.domain.SearchGame
 import dev.tavarus.boardgamelogger.ui.shared.Action
 import dev.tavarus.boardgamelogger.ui.shared.ActionViewModel
 import kotlinx.coroutines.Job
@@ -38,7 +37,7 @@ class LogPlayViewModel @Inject constructor(
                     uiState.value.scoreItems.filterIsInstance<PlayerScoreItem.ActivePlayer>()
                         .map { it.score },
                 ),
-                uiState.value.game // this needs to be updated
+                uiState.value.game.objectId
             )
             if (response) {
                 dispatch(LogPlayAction.SuccessfulLog)
@@ -74,8 +73,7 @@ class LogPlayViewModel @Inject constructor(
     }
 
     fun gameTitleSelected(game: BaseGame) {
-        dispatch(LogPlayAction.GameTitleChange(game.displayName))
-        // This is where we would set the "selected game" correctly
+        dispatch(LogPlayAction.GameSelected(game))
     }
 
     fun updateScore(index: Int, score: String) {
@@ -89,6 +87,7 @@ class LogPlayViewModel @Inject constructor(
 
 sealed class LogPlayAction : Action<VMState> {
     data class GameTitleChange(val title: String) : LogPlayAction()
+    data class GameSelected(val game: BaseGame) : LogPlayAction()
     data class ScoreFocused(val scoreIndex: Int) : LogPlayAction()
     data class ScoreUpdated(val index: Int, val scoreText: String) : LogPlayAction()
     data class NameUpdated(val index: Int, val name: String) : LogPlayAction()
@@ -100,7 +99,8 @@ sealed class LogPlayAction : Action<VMState> {
     data class GameSuggestionsReceived(val suggestions: List<BaseGame>) : LogPlayAction()
 
     override fun update(state: VMState) = when (this) {
-        is GameTitleChange -> state.copy(game = this.title)
+        is GameTitleChange -> state.copy(game = LocalGame(title))
+        is GameSelected -> state.copy(game = game)
         is ScoreFocused -> {
             var newState = state.copy(selectedPlayer = scoreIndex, nameSuggestions = listOf())
             val focusedScore = state.scoreItems[scoreIndex]
@@ -172,7 +172,7 @@ fun VMState.updateActivePlayerItem(index: Int, scoreUpdate: (PlayerScore) -> Pla
 }
 
 data class VMState(
-    val game: String = "", // This will eventually be a BoardGame object
+    val game: BaseGame = LocalGame(""), // This will eventually be a BoardGame object
     val gameSuggestions: List<BaseGame> = listOf(),
     val scoreItems: List<PlayerScoreItem> = listOf(PlayerScoreItem.NewPlayer),
     val selectedPlayer: Int? = null,

@@ -4,9 +4,11 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import dev.tavarus.boardgamelogger.ui.gameinfo.GameInfoRoute
 import dev.tavarus.boardgamelogger.ui.gameinfo.GameInfoScreen
 import dev.tavarus.boardgamelogger.ui.gameinfo.GameInfoViewModel
@@ -31,7 +33,10 @@ fun NavComponent() {
         }
         composable<GameInfoRoute> {
             val viewModel = hiltViewModel<GameInfoViewModel>()
-            GameInfoScreen(viewModel)
+            GameInfoScreen(
+                viewModel,
+                onClose = { navController.popBackStack() }
+            )
         }
         composable<LogPlayScreenRoute>(
             enterTransition = {
@@ -50,7 +55,16 @@ fun NavComponent() {
             val viewModel = hiltViewModel<LogPlayViewModel>()
             LogPlayScreen(
                 viewModel,
-                onClose = { navController.popBackStack() }
+                onClose = { navController.popBackStack() },
+                navigateToGame = { gameId ->
+                    navController.navigate(
+                        GameInfoRoute(gameId),
+                        navOptions = navOptions {
+                            popUpTo<LogPlayScreenRoute> {
+                                inclusive = true
+                            }
+                        })
+                },
             )
         }
     }
