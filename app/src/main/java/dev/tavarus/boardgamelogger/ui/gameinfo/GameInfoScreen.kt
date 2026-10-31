@@ -1,5 +1,6 @@
 package dev.tavarus.boardgamelogger.ui.gameinfo
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ const val HEADER_OFFSET = "headerOffset"
 @Composable
 fun GameInfoScreen(
     viewModel: GameInfoViewModel,
+    onClose: () -> Unit,
 ) {
     val uiState = viewModel.collectUIState()
     val scrollState = rememberScrollState()
@@ -54,6 +56,9 @@ fun GameInfoScreen(
             .fillMaxSize()
             .nestedScroll(connection)
     ) {
+        BackHandler {
+            onClose()
+        }
 
         Column(
             modifier = Modifier
@@ -67,34 +72,35 @@ fun GameInfoScreen(
                 )
         ) {
 
-        }
 
-        when (uiState.value.boardGame) {
-            is RemoteData.Failure -> {
-                Text("FAILE")
-            } // TODO: FAILURE
-            RemoteData.Loading -> Text("LODD") // TODO: LOADING
-            is RemoteData.Success -> {
-                val boardGame = (uiState.value.boardGame as RemoteData.Success).data
-                GameHeader(
-                    boardGame,
-                    connection.getCurrentValue(IMAGE_SIZE_OFFSET)!!,
-                    connection.getCurrentValue(SUBTITLE_OFFSET)!!,
-                    connection.getOpacity(SUBTITLE_OFFSET, 0.66f)!!,
-                    connection.getCurrentValue(HEADER_OFFSET)!!,
-                    connection.getOpacity(HEADER_OFFSET, 0.66f)!!,
-                    { measuredSubtitleHeight ->
-                        connection.updateConstraint(
-                            replaceKey = SUBTITLE_OFFSET,
-                            endDp = 0.dp - measuredSubtitleHeight
-                        )
-                    },
-                    { measuredTitleHeight ->
-                        if (titleHeight == 0.dp) {
-                            titleHeight = measuredTitleHeight
+            when (val boardGameResponse = uiState.value.boardGame) {
+                is RemoteData.Failure -> {
+                    Text("FAILE")
+                } // TODO: FAILURE
+                RemoteData.Loading -> Text("LODD") // TODO: LOADING
+                is RemoteData.Success -> {
+                    val boardGame = boardGameResponse.data
+                    GameHeader(
+                        boardGame,
+                        connection.getCurrentValue(IMAGE_SIZE_OFFSET)!!,
+                        connection.getCurrentValue(SUBTITLE_OFFSET)!!,
+                        connection.getOpacity(SUBTITLE_OFFSET, 0.66f)!!,
+                        connection.getCurrentValue(HEADER_OFFSET)!!,
+                        connection.getOpacity(HEADER_OFFSET, 0.66f)!!,
+                        { measuredSubtitleHeight ->
+                            connection.updateConstraint(
+                                replaceKey = SUBTITLE_OFFSET,
+                                endDp = 0.dp - measuredSubtitleHeight
+                            )
+                        },
+                        { measuredTitleHeight ->
+                            if (titleHeight == 0.dp) {
+                                titleHeight = measuredTitleHeight
+                            }
                         }
-                    }
-                )
+                    )
+
+                }
             }
         }
     }

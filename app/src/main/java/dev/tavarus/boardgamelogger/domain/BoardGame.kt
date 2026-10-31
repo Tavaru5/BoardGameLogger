@@ -10,11 +10,14 @@ data class BoardGame(
     @PrimaryKey override val objectId: String,
     val image: String,
     val thumbnail: String,
-    override val year: String,
+    val year: String,
     val description: String,
     val playerCount: PlayerCount,
     val playTime: PlayTime,
-) : BaseGame
+) : BaseGame {
+    override val displayName: String
+        get() = "$name - ($year)"
+}
 
 data class PlayerCount(
     val min: Int,

@@ -31,6 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import dev.tavarus.boardgamelogger.R
+import dev.tavarus.boardgamelogger.data.RemoteData
+import dev.tavarus.boardgamelogger.ui.shared.LoadingDots
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -47,9 +49,14 @@ data object LogPlayScreenRoute
 fun LogPlayScreen(
     viewModel: LogPlayViewModel,
     onClose: () -> Unit,
+    navigateToGame: (String) -> Unit,
 ) {
     val uiState = viewModel.collectUIState()
     val focusManager = LocalFocusManager.current
+
+    if ((uiState.value.successState as? RemoteData.Success)?.data == true) {
+        navigateToGame(uiState.value.game.objectId)
+    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface
     ) { paddingValues ->
@@ -104,7 +111,7 @@ fun LogPlayScreen(
                 ) { dropdownModifier ->
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth().dropdownModifier(),
-                        value = uiState.value.game,
+                        value = uiState.value.game.name,
                         onValueChange = { viewModel.updateGameTitle(it) },
                         placeholder = { Text(stringResource(R.string.log_play_board_game_hint)) },
                         keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
@@ -151,11 +158,15 @@ fun LogPlayScreen(
                     },
                     colors = ButtonDefaults.buttonColors(),
                     enabled = uiState.value.scoreItems.filterIsInstance<PlayerScoreItem.ActivePlayer>()
-                        .isNotEmpty()
+                        .isNotEmpty(),
                 ) {
-                    Text(
-                        text = stringResource(R.string.log_play_cta),
-                    )
+                    if (uiState.value.successState is RemoteData.Loading) {
+                        LoadingDots()
+                    } else {
+                        Text(
+                            text = stringResource(R.string.log_play_cta),
+                        )
+                    }
                 }
             }
         }
