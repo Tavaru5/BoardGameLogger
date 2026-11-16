@@ -18,7 +18,9 @@ data class PlayWithScores(
         return Play(
             scores = this.scores.map { entry ->
                 PlayerScore(entry.player, entry.score.score)
-            }
+            },
+            timestamp = play.timeStamp,
+            gameId = play.gameId,
         )
     }
 }

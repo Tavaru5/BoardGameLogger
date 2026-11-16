@@ -1,7 +1,6 @@
 package dev.tavarus.boardgamelogger.data.plays
 
 import dev.tavarus.boardgamelogger.domain.Play
-import java.util.Date
 import javax.inject.Inject
 
 class PlaysDataRepository @Inject constructor(
@@ -13,9 +12,8 @@ class PlaysDataRepository @Inject constructor(
         }
 
     // This should also be an update thing not just an insert (for instance, if the players already exist)
-    override suspend fun logPlay(play: Play, gameId: String): Boolean {
-        val now = Date().time
-        val dbPlay = DBPlay(gameId = gameId, timeStamp = now)
+    override suspend fun logPlay(play: Play): Boolean {
+        val dbPlay = DBPlay(gameId = play.gameId, timeStamp = play.timestamp)
         return playsDao.insertWholePlay(play, dbPlay)
     }
 

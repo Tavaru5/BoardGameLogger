@@ -3,6 +3,7 @@
     <string name="personal_collection_title">%1$s\'s BGG Collection</string>
     <string name="previously_played">Previously Played</string>
 
+    <!-- Game info -->
     <string name="title_format">%1$s (%2$s)</string>
     <string name="play_time_range_minutes_format">%1$d-%2$d min</string>
     <string name="play_time_single_minutes_format">%1$d min</string>
@@ -13,6 +14,9 @@
     <string name="player_count_single_format">%1$d Players</string>
     <string name="player_count_solo">1 Player</string>
 
+    <string name="previous_plays">Previous Plays</string>
+
+    <!-- Log Play -->
     <string name="log_play_board_game_title">Game</string>
     <string name="log_play_board_game_hint">What game did you play?</string>
     <string name="log_play_scores_title">Scores</string>
@@ -24,6 +28,7 @@
     <!-- Content Descriptions -->
     <string name="cd_bg_thumbnail">Thumbnail for %1$s</string>
     <string name="cd_close_icon">Close</string>
+    <string name="cd_crown_icon">Crown</string>
 
     <!-- Click Labels -->
     <string name="click_label_close_button">close screen</string>

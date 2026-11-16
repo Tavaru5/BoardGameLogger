@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Players")
 data class Player(
     @PrimaryKey val name: String,
-    val backgroundColor: PlayerColor
+    val backgroundColor: PlayerColor = PlayerColor.PURP // idk if this needs to be tied to a player
 )
 
 enum class PlayerColor {

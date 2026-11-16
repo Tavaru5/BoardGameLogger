@@ -23,7 +23,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @HiltViewModel
 class LogPlayViewModel @Inject constructor(
     val playsRepository: PlaysRepository,
-    val searchBoardGameUseCase: SearchBoardGameUseCase
+    val searchBoardGameUseCase: SearchBoardGameUseCase,
 ) : ActionViewModel<VMState, LogPlayAction>(VMState()) {
     override val tag = "LogPlay"
     var nameQueryJob: Job? = null
@@ -36,8 +36,9 @@ class LogPlayViewModel @Inject constructor(
                 Play(
                     uiState.value.scoreItems.filterIsInstance<PlayerScoreItem.ActivePlayer>()
                         .map { it.score },
+                    timestamp = System.currentTimeMillis(),
+                    gameId = uiState.value.game.objectId
                 ),
-                uiState.value.game.objectId
             )
             if (response) {
                 dispatch(LogPlayAction.SuccessfulLog)
