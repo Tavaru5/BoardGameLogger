@@ -3,7 +3,11 @@ package dev.tavarus.boardgamelogger.domain
 import dev.tavarus.boardgamelogger.data.plays.Player
 
 
-data class Play(val scores: List<PlayerScore> = listOf())
+data class Play(
+    val scores: List<PlayerScore> = listOf(),
+    val timestamp: Long,
+    val gameId: String,
+)
 
 data class PlayerScore(
     val player: Player,

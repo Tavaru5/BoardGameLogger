@@ -1,5 +1,6 @@
 package dev.tavarus.boardgamelogger.ui.gameinfo
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +33,7 @@ const val IMAGE_SIZE_OFFSET = "imageSizeOffset"
 const val SUBTITLE_OFFSET = "subtitleOffset"
 const val HEADER_OFFSET = "headerOffset"
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun GameInfoScreen(
     viewModel: GameInfoViewModel,
@@ -50,29 +53,16 @@ fun GameInfoScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .fillMaxSize()
-            .nestedScroll(connection)
-    ) {
-        BackHandler {
-            onClose()
-        }
-
-        Column(
+    Scaffold {
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .verticalScroll(scrollState)
-                .padding(
-                    top = 100.dp // Height of the image
-                            + connection.getTotalOffsets()
-                            + titleHeight
-                )
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .fillMaxSize()
+                .nestedScroll(connection)
         ) {
-
-
+            BackHandler {
+                onClose()
+            }
             when (val boardGameResponse = uiState.value.boardGame) {
                 is RemoteData.Failure -> {
                     Text("FAILE")
@@ -99,9 +89,30 @@ fun GameInfoScreen(
                             }
                         }
                     )
-
                 }
             }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(scrollState)
+                    .padding(
+                        top = 100.dp // Height of the image
+                                + connection.getTotalOffsets()
+                                + titleHeight
+                    )
+                    .padding(horizontal = 16.dp)
+            ) {
+                // Might want the header to be a little smaller
+                // If there is user input data, we might want it to be editable
+                PreviousPlaySection(uiState.value.previousPlays)
+
+                // List of previous plays
+                // Maybe some stats?
+                // Log Play button
+            }
+
         }
     }
+
 }
